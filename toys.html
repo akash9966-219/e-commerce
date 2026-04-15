@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Kids | Toys & Wonder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fdfdfd;
+            --accent: #8da399;
+            --text: #2d3436;
+            --border: #edf2f7;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: var(--glass); backdrop-filter: blur(15px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; z-index: 1000; border-bottom: 1px solid var(--border);
+        }
+        .logo { font-size: 1.4rem; font-weight: 600; letter-spacing: 6px; color: var(--accent); text-transform: uppercase; text-decoration: none; }
+        .cart-btn {
+            background: white; padding: 10px 22px; border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer;
+            display: flex; align-items: center; gap: 10px; font-weight: 600;
+            border: 1px solid var(--border); color: var(--text);
+        }
+
+        main { padding: 120px 8% 5rem; max-width: 1400px; margin: 0 auto; }
+        .back-link { display: inline-block; margin-bottom: 25px; text-decoration: none; color: var(--accent); font-weight: 600; font-size: 0.9rem; transition: 0.3s; }
+        .back-link:hover { color: var(--text); transform: translateX(-5px); }
+
+        h1 { font-weight: 300; font-size: 2.2rem; margin-bottom: 2rem; text-align: center; }
+
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2.5rem; }
+
+        .product-card {
+            background: white; border-radius: 24px; padding: 25px;
+            text-align: center; cursor: pointer; transition: 0.4s ease;
+            border: 1px solid transparent; animation: fadeIn 0.8s ease;
+        }
+        .product-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .product-card img { width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 18px; margin-bottom: 15px; }
+        .product-card h3 { font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; color: #4a5568; text-transform: uppercase; }
+        .price-tag { margin-top: 8px; font-size: 1.2rem; color: var(--accent); font-weight: 600; }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .detail-modal {
+            background: white; width: 90%; max-width: 900px; max-height: 90vh;
+            border-radius: 30px; display: flex; overflow: hidden; position: relative;
+            animation: slideUp 0.5s ease;
+        }
+        .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.5rem; z-index: 10; }
+        .modal-img { width: 45%; background: #f1f5f9; padding: 40px; display: flex; align-items: center; }
+        .modal-img img { width: 100%; height: auto; object-fit: contain; }
+        .modal-info { width: 55%; padding: 40px; overflow-y: auto; }
+
+        /* Discount Section Styles */
+        .mrp { text-decoration: line-through; color: #a0aec0; font-size: 0.9rem; margin-right: 10px; }
+        .discount-price { font-size: 1.8rem; font-weight: 600; color: var(--text); }
+        .off-percent { color: #38a169; font-weight: 600; font-size: 0.9rem; margin-left: 10px; }
+
+        .description { margin: 20px 0; font-size: 0.95rem; line-height: 1.6; color: #718096; }
+        .size-btn { border: 1px solid #e2e8f0; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
+        .size-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .btn-main { width: 100%; padding: 18px; border: none; border-radius: 15px; background: var(--accent); color: white; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-main:hover { background: #2d3436; }
+        
+        .qty-controls { display: none; align-items: center; justify-content: space-between; background: #f1f5f9; border-radius: 15px; padding: 10px 20px; }
+        .qty-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--accent); padding: 0 15px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a href="index.html" class="logo">Aura</a>
+        <a href="cart.html" style="text-decoration: none;">
+            <div class="cart-btn">🛒 Bag (<span id="bag-count">0</span>)</div>
+        </a>
+    </nav>
+
+    <main>
+        <a href="products.html" class="back-link">← Back to Collections</a>
+        <h1>Toys & Wonder</h1>
+
+        <div class="product-grid">
+            <div class="product-card" onclick="openProduct('ICE CREAM SET', 1200, 1800, 'Hand-painted wooden treats.', 'images/toys-kids.jpg', [['Standard', 0], ['Deluxe', 800]])">
+                <img src="images/toys-kids.jpg" alt="Toy 1">
+                <h3>ICE CREAM SET</h3>
+                <div class="price-tag">₹1200</div>
+            </div>
+            <div class="product-card" onclick="openProduct('PLUSH TEDDY BEAR', 850, 1200, 'Soft organic cotton companion.', 'images/toys-kids2.jpg', [['Small', 0], ['Large', 400]])">
+                <img src="images/toys-kids2.jpg" alt="Toy 2">
+                <h3>PLUSH TEDDY BEAR</h3>
+                <div class="price-tag">₹850</div>
+            </div>
+            <div class="product-card" onclick="openProduct('TRUCKS', 1500, 2100, 'Durable construction vehicles.', 'images/toys-kids3.jpg', [['Single', 0], ['Pack of 3', 900]])">
+                <img src="images/toys-kids3.jpg" alt="Toy 3">
+                <h3>TRUCKS</h3>
+                <div class="price-tag">₹1500</div>
+            </div>
+            <div class="product-card" onclick="openProduct('ELEPHANT ON WHEEL', 950, 1400, 'Classic wooden pull-along toy.', 'images/toys-kids4.jpg', [['Maple', 0], ['Oak', 350]])">
+                <img src="images/toys-kids4.jpg" alt="Toy 4">
+                <h3>ELEPHANT ON WHEEL</h3>
+                <div class="price-tag">₹950</div>
+            </div>
+            <div class="product-card" onclick="openProduct('REMOTE CAR', 2200, 3000, 'High-speed racing with remote.', 'images/toys-kids5.jpg', [['Basic', 0], ['Nitro', 1200]])">
+                <img src="images/toys-kids5.jpg" alt="Toy 5">
+                <h3>REMOTE CAR</h3>
+                <div class="price-tag">₹2200</div>
+            </div>
+            <div class="product-card" onclick="openProduct('CONSTRUCTION SET', 1800, 2500, 'Build your own skyscraper.', 'images/toys-kids6.jpg', [['Starter', 0], ['Master', 1000]])">
+                <img src="images/toys-kids6.jpg" alt="Toy 6">
+                <h3>CONSTRUCTION SET</h3>
+                <div class="price-tag">₹1800</div>
+            </div>
+            <div class="product-card" onclick="openProduct('HELI', 3500, 4800, 'Stable beginners flight drone.', 'images/toys-kids7.jpg', [['Standard', 0], ['HD Cam', 2000]])">
+                <img src="images/toys-kids7.jpg" alt="Toy 7">
+                <h3>HELI</h3>
+                <div class="price-tag">₹3500</div>
+            </div>
+            <div class="product-card" onclick="openProduct('DOCTOR KIT', 4200, 5500, 'Full medical play set.', 'images/toys-kids8.jpg', [['Plastic', 0], ['Wooden Premium', 1300]])">
+                <img src="images/toys-kids8.jpg" alt="Toy 8">
+                <h3>DOCTOR KIT</h3>
+                <div class="price-tag">₹4200</div>
+            </div>
+            <div class="product-card" onclick="openProduct('PUZZLE WORLD', 600, 900, 'Educational world map puzzle.', 'images/toys-kids9.jpg', [['500 pcs', 0], ['1000 pcs', 300]])">
+                <img src="images/toys-kids9.jpg" alt="Toy 9">
+                <h3>PUZZLE WORLD</h3>
+                <div class="price-tag">₹600</div>
+            </div>
+            <div class="product-card" onclick="openProduct('PIANO SET', 1800, 2500, 'Musical learning keyboard.', 'images/toys-kids10.jpg', [['32 Key', 0], ['64 Key', 700]])">
+                <img src="images/toys-kids10.jpg" alt="Toy 10">
+                <h3>PIANO SET</h3>
+                <div class="price-tag">₹1800</div>
+            </div>
+            <div class="product-card" onclick="openProduct('SUPER CAR', 1100, 1600, 'Sleek aerodynamic diecast car.', 'images/toys-kids11.jpg', [['1:24 Scale', 0], ['1:18 Scale', 500]])">
+                <img src="images/toys-kids11.jpg" alt="Toy 11">
+                <h3>SUPER CAR</h3>
+                <div class="price-tag">₹1100</div>
+            </div>
+            <div class="product-card" onclick="openProduct('ROBOT X', 2800, 3800, 'Programmable dancing robot.', 'images/toys-kids12.jpg', [['Lite', 0], ['Pro AI', 1000]])">
+                <img src="images/toys-kids12.jpg" alt="Toy 12">
+                <h3>ROBOT X</h3>
+                <div class="price-tag">₹2800</div>
+            </div>
+            <div class="product-card" onclick="openProduct('TRAIN RUN', 1400, 2000, 'Magnetic gravity-defying tracks.', 'images/toys-kids13.jpg', [['Small', 0], ['Bridge Expansion', 800]])">
+                <img src="images/toys-kids13.jpg" alt="Toy 13">
+                <h3>TRAIN RUN</h3>
+                <div class="price-tag">₹1400</div>
+            </div>
+            <div class="product-card" onclick="openProduct('BUGGY 4X4', 1900, 2600, 'Off-road stunt vehicle.', 'images/toys-kids14.jpg', [['2WD', 0], ['4WD Beast', 1100]])">
+                <img src="images/toys-kids14.jpg" alt="Toy 14">
+                <h3>BUGGY 4X4</h3>
+                <div class="price-tag">₹1900</div>
+            </div>
+            <div class="product-card" onclick="openProduct('ROBO MAN', 2500, 3500, 'Interactive action figure.', 'images/toys-kids15.jpg', [['Solo', 0], ['Duo Pack', 1500]])">
+                <img src="images/toys-kids15.jpg" alt="Toy 15">
+                <h3>ROBO MAN</h3>
+                <div class="price-tag">₹2500</div>
+            </div>
+           
+        </div>
+    </main>
+
+    <div class="overlay" id="productOverlay">
+        <div class="detail-modal">
+            <span class="close-modal" onclick="closeProduct()">✕</span>
+            <div class="modal-img"><img id="modalImg" src="" alt=""></div>
+            <div class="modal-info">
+                <h2 id="modalTitle">Toy Name</h2>
+                <div style="margin-top: 10px;">
+                    <span class="mrp" id="modalMRP">₹0</span>
+                    <span class="discount-price" id="modalPrice">₹0</span>
+                    <span class="off-percent" id="modalOff">0% OFF</span>
+                </div>
+                <p class="description" id="modalDesc"></p>
+                <div style="margin-bottom: 10px; font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">Edition/Size</div>
+                <div class="size-options" id="sizeOptions" style="display: flex; gap: 10px; margin-bottom: 25px;"></div>
+                <div class="action-area">
+                    <button class="btn-main" id="addBtn" onclick="initAddToCart()">Add to Bag</button>
+                    <div class="qty-controls" id="qtyArea">
+                        <button class="qty-btn" onclick="updateQty(-1)">−</button>
+                        <span class="qty-val" id="qtyVal">1</span>
+                        <button class="qty-btn" onclick="updateQty(1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQty = 1;
+        let basePrice = 0;
+        let baseMRP = 0;
+
+        window.onload = function() { updateBadge(); }
+
+        function openProduct(name, price, mrp, desc, imgPath, configs) {
+            basePrice = price;
+            baseMRP = mrp;
+            document.getElementById('modalTitle').innerText = name;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalImg').src = imgPath; 
+
+            const optionsContainer = document.getElementById('sizeOptions');
+            optionsContainer.innerHTML = '';
+            
+            configs.forEach((cfg, index) => {
+                const btn = document.createElement('div');
+                btn.className = index === 0 ? 'size-btn active' : 'size-btn';
+                btn.innerText = cfg[0];
+                btn.onclick = function() { 
+                    selectSize(this); 
+                    updatePricing(cfg[1]);
+                };
+                optionsContainer.appendChild(btn);
+            });
+
+            updatePricing(0);
+            currentQty = 1;
+            document.getElementById('qtyVal').innerText = currentQty;
+            document.getElementById('addBtn').style.display = 'block';
+            document.getElementById('qtyArea').style.display = 'none';
+            document.getElementById('productOverlay').style.display = 'flex';
+        }
+
+        function updatePricing(priceAdd) {
+            const finalPrice = basePrice + priceAdd;
+            const finalMRP = baseMRP + priceAdd;
+            document.getElementById('modalPrice').innerText = "₹" + finalPrice.toLocaleString();
+            document.getElementById('modalMRP').innerText = "₹" + finalMRP.toLocaleString();
+            const off = Math.round(((finalMRP - finalPrice) / finalMRP) * 100);
+            document.getElementById('modalOff').innerText = off + "% OFF";
+        }
+
+        function closeProduct() { document.getElementById('productOverlay').style.display = 'none'; }
+        
+        function selectSize(btn) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function initAddToCart() {
+            document.getElementById('addBtn').style.display = 'none';
+            document.getElementById('qtyArea').style.display = 'flex';
+            updateGlobalBag(1);
+        }
+
+        function updateQty(change) {
+            currentQty += change;
+            if (currentQty < 1) {
+                document.getElementById('addBtn').style.display = 'block';
+                document.getElementById('qtyArea').style.display = 'none';
+                updateGlobalBag(-1);
+                currentQty = 1; 
+            } else {
+                document.getElementById('qtyVal').innerText = currentQty;
+                updateGlobalBag(change);
+            }
+        }
+
+        function updateGlobalBag(count) {
+            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const productName = document.getElementById('modalTitle').innerText;
+            const size = document.querySelector('.size-btn.active').innerText;
+            const productImg = document.getElementById('modalImg').getAttribute('src'); 
+            const productPrice = parseInt(document.getElementById('modalPrice').innerText.replace(/₹|,/g,''));
+            
+            const existingIndex = cart.findIndex(i => i.name === productName && i.size === size);
+            
+            if(existingIndex !== -1) {
+                cart[existingIndex].qty = currentQty;
+                if(cart[existingIndex].qty <= 0) cart.splice(existingIndex, 1);
+            } else if (count > 0) {
+                cart.push({ name: productName, price: productPrice, img: productImg, size: size, qty: currentQty });
+            }
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            updateBadge();
+        }
+
+        function updateBadge() {
+            const cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const total = cart.reduce((acc, item) => acc + item.qty, 0);
+            const badge = document.getElementById('bag-count');
+            if (badge) badge.innerText = total;
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('productOverlay')) closeProduct();
+        }
+    </script>
+</body>
+</html>

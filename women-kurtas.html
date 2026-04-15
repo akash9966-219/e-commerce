@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | Women's Kurtas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --accent: #8da399;
+            --text: #2d3436;
+            --border: #edf2f7;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: var(--glass); backdrop-filter: blur(15px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; z-index: 1000; border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-size: 1.4rem; font-weight: 600; letter-spacing: 6px; color: var(--accent); text-transform: uppercase; text-decoration: none; }
+
+        .cart-btn {
+            background: white; padding: 10px 22px; border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer;
+            display: flex; align-items: center; gap: 10px; font-weight: 600;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .back-link:hover { transform: translateX(-5px); color: var(--text); }
+
+        main { padding: 120px 8% 5rem; max-width: 1400px; margin: 0 auto; }
+        h1 { font-weight: 300; font-size: 2.2rem; margin-bottom: 2rem; text-align: center; }
+
+        .shirts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .product-card {
+            background: white; border-radius: 24px; padding: 25px;
+            text-align: center; cursor: pointer; transition: 0.4s ease;
+            border: 1px solid transparent; animation: fadeIn 0.8s ease;
+        }
+
+        .product-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .product-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 18px; margin-bottom: 15px; }
+        .product-card h3 { font-size: 1.1rem; font-weight: 600; letter-spacing: 1px; color: #4a5568; }
+        .price-tag { margin-top: 8px; font-size: 1.2rem; color: var(--accent); font-weight: 600; }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+
+        .detail-modal {
+            background: white; width: 90%; max-width: 900px; max-height: 90vh;
+            border-radius: 30px; display: flex; overflow: hidden; position: relative;
+            animation: slideUp 0.5s ease;
+        }
+
+        .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.5rem; z-index: 10; }
+        .modal-img { width: 45%; background: #f1f5f9; }
+        .modal-img img { width: 100%; height: 100%; object-fit: cover; }
+        .modal-info { width: 55%; padding: 40px; overflow-y: auto; }
+
+        .mrp { text-decoration: line-through; color: #a0aec0; font-size: 0.9rem; margin-right: 10px; }
+        .discount-price { font-size: 1.8rem; font-weight: 600; color: var(--text); }
+        .off-percent { color: #38a169; font-weight: 600; font-size: 0.9rem; margin-left: 10px; }
+
+        .description { margin: 20px 0; font-size: 0.95rem; line-height: 1.6; color: #718096; }
+        .size-btn { border: 1px solid #e2e8f0; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
+        .size-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .btn-main { width: 100%; padding: 18px; border: none; border-radius: 15px; background: var(--accent); color: white; font-weight: 600; cursor: pointer; }
+        .qty-controls { display: none; align-items: center; justify-content: space-between; background: #f1f5f9; border-radius: 15px; padding: 10px 20px; }
+        .qty-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--accent); padding: 0 15px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        @media (max-width: 768px) {
+            .detail-modal { flex-direction: column; overflow-y: auto; }
+            .modal-img, .modal-info { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a href="products.html" class="logo">Aura</a>
+        <a href="cart.html" style="text-decoration: none;">
+            <div class="cart-btn">🛒 Bag (<span id="bag-count">0</span>)</div>
+        </a>
+    </nav>
+
+    <main>
+        <a href="products.html" class="back-link">← Back to Collections</a>
+        
+        <h1>Elegant Kurtas</h1>
+        <div class="shirts-grid">
+            <div class="product-card" onclick="openProduct('Indigo Straight', 1250, 1999, 'Pure cotton straight kurta with traditional block prints.', 'images/kurtas-women.jpg')">
+                <img src="images/kurtas-women.jpg" alt="Kurta 1">
+                <h3>INDIGO STRAIGHT</h3>
+                <div class="price-tag">₹1250</div>
+            </div>
+            <div class="product-card" onclick="openProduct('Embroidered Silk', 2499, 4500, 'Fine silk kurta featuring intricate hand embroidery on neck.', 'images/kurtas-women2.jpg')">
+                <img src="images/kurtas-women2.jpg" alt="Kurta 2">
+                <h3>EMBROIDERED SILK</h3>
+                <div class="price-tag">₹2499</div>
+            </div>
+            <div class="product-card" onclick="openProduct('Floral Anarkali', 1899, 2999, 'Flowy Anarkali kurta with vibrant summer floral patterns.', 'images/kurtas-women3.jpg')">
+                <img src="images/kurtas-women3.jpg" alt="Kurta 3">
+                <h3>FLORAL ANARKALI</h3>
+                <div class="price-tag">₹1899</div>
+            </div>
+            <div class="product-card" onclick="openProduct('Lucknowi Chikan', 1599, 3200, 'Authentic hand-stitched Georgette Chikan Kari kurta.', 'images/kurtas-women4.jpg')">
+                <img src="images/kurtas-women4.jpg" alt="Kurta 4">
+                <h3>LUCKNOWI CHIKAN</h3>
+                <div class="price-tag">₹1599</div>
+            </div>
+            <div class="product-card" onclick="openProduct('Zen Linen Kurta', 1100, 1800, 'Minimalist solid-colored linen blend for everyday comfort.', 'images/kurtas-women5.jpg')">
+                <img src="images/kurtas-women5.jpg" alt="Kurta 5">
+                <h3>ZEN LINEN KURTA</h3>
+                <div class="price-tag">₹1100</div>
+            </div>
+            <div class="product-card" onclick="openProduct('Azure Cotton', 1350, 2100, 'Azure blue cotton kurta with silver line work.', 'images/kurtas-women6.jpg')">
+                <img src="images/kurtas-women6.jpg" alt="Kurta 6">
+                <h3>AZURE COTTON</h3>
+                <div class="price-tag">₹1350</div>
+            </div>
+            <div class="product-card" onclick="openProduct('Pastel Bloom', 1700, 2800, 'Soft pastel shades with delicate flower motifs.', 'images/kurtas-women7.jpg')">
+                <img src="images/kurtas-women7.jpg" alt="Kurta 7">
+                <h3>PASTEL BLOOM</h3>
+                <div class="price-tag">₹1700</div>
+            </div>
+            <div class="product-card" onclick="openProduct('Ruby Velvet', 3200, 5500, 'Festive ruby red velvet kurta with gold lace.', 'images/kurtas-women8.jpg')">
+                <img src="images/kurtas-women8.jpg" alt="Kurta 8">
+                <h3>RUBY VELVET</h3>
+                <div class="price-tag">₹3200</div>
+            </div>
+            <div class="product-card" onclick="openProduct('Sage Handloom', 1450, 2400, 'Earthy sage green handloom fabric for a rustic look.', 'images/kurtas-women9.jpg')">
+                <img src="images/kurtas-women9.jpg" alt="Kurta 9">
+                <h3>SAGE HANDLOOM</h3>
+                <div class="price-tag">₹1450</div>
+            </div>
+            <div class="product-card" onclick="openProduct('Ivory Classic', 1950, 3100, 'Classic ivory white kurta with pearl buttons.', 'images/kurtas-women10.jpg')">
+                <img src="images/kurtas-women10.jpg" alt="Kurta 10">
+                <h3>IVORY CLASSIC</h3>
+                <div class="price-tag">₹1950</div>
+            </div>
+            <div class="product-card" onclick="openProduct('Midnight Flare', 2100, 3800, 'Short flared midnight blue kurta for casual wear.', 'images/kurtas-women11.jpg')">
+                <img src="images/kurtas-women11.jpg" alt="Kurta 11">
+                <h3>MIDNIGHT FLARE</h3>
+                <div class="price-tag">₹2100</div>
+            </div>
+            <div class="product-card" onclick="openProduct('Sunset Georgette', 1850, 2900, 'Vibrant orange georgette with a flowy silhouette.', 'images/kurtas-women12.jpg')">
+                <img src="images/kurtas-women12.jpg" alt="Kurta 12">
+                <h3>SUNSET GEORGETTE</h3>
+                <div class="price-tag">₹1850</div>
+            </div>
+            <div class="product-card" onclick="openProduct('Red Cynic', 1850, 2900, 'Deep red cotton straight fit.', 'images/kurtas-women13.jpg')">
+                <img src="images/kurtas-women13.jpg" alt="Kurta 13">
+                <h3>RED CYNIC</h3>
+                <div class="price-tag">₹1850</div>
+            </div>
+            <div class="product-card" onclick="openProduct('Pink Hue', 1850, 2900, 'Soft blush pink embroidered ensemble.', 'images/kurtas-women14.jpg')">
+                <img src="images/kurtas-women14.jpg" alt="Kurta 14">
+                <h3>PINK HUE</h3>
+                <div class="price-tag">₹1850</div>
+            </div>
+        </div>
+    </main>
+
+    <div class="overlay" id="productOverlay">
+        <div class="detail-modal">
+            <span class="close-modal" onclick="closeProduct()">✕</span>
+            <div class="modal-img">
+                <img id="modalImg" src="" alt="Selected Kurta">
+            </div>
+            <div class="modal-info">
+                <h2 id="modalTitle">Product Name</h2>
+                <div style="margin-top: 10px;">
+                    <span class="mrp" id="modalMRP">₹0</span>
+                    <span class="discount-price" id="modalPrice">₹0</span>
+                    <span class="off-percent" id="modalOff">0% OFF</span>
+                </div>
+                <p class="description" id="modalDesc"></p>
+                
+                <div style="margin-bottom: 10px;">Select Size</div>
+                <div class="size-options" style="display: flex; gap: 10px; margin-bottom: 25px;">
+                    <div class="size-btn" onclick="selectSize(this)">S</div>
+                    <div class="size-btn active" onclick="selectSize(this)">M</div>
+                    <div class="size-btn" onclick="selectSize(this)">L</div>
+                    <div class="size-btn" onclick="selectSize(this)">XL</div>
+                    <div class="size-btn" onclick="selectSize(this)">XXL</div>
+                </div>
+
+                <div class="action-area">
+                    <button class="btn-main" id="addBtn" onclick="initAddToCart()">Add to Cart</button>
+                    <div class="qty-controls" id="qtyArea">
+                        <button class="qty-btn" onclick="updateQty(-1)">−</button>
+                        <span class="qty-val" id="qtyVal">1</span>
+                        <button class="qty-btn" onclick="updateQty(1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQty = 1;
+        let totalBagItems = 0;
+
+        window.onload = function() {
+            const savedCart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            totalBagItems = savedCart.reduce((acc, item) => acc + item.qty, 0);
+            document.getElementById('bag-count').innerText = totalBagItems;
+        }
+
+        function openProduct(name, price, mrp, desc, imgPath) {
+            document.getElementById('modalTitle').innerText = name;
+            document.getElementById('modalPrice').innerText = "₹" + price;
+            document.getElementById('modalMRP').innerText = "₹" + mrp;
+            document.getElementById('modalDesc').innerText = desc;
+            
+            // Set the image src to the specific product image
+            document.getElementById('modalImg').src = imgPath; 
+            
+            const off = Math.round(((mrp - price) / mrp) * 100);
+            document.getElementById('modalOff').innerText = off + "% OFF";
+
+            currentQty = 1;
+            document.getElementById('qtyVal').innerText = currentQty;
+            document.getElementById('addBtn').style.display = 'block';
+            document.getElementById('qtyArea').style.display = 'none';
+            document.getElementById('productOverlay').style.display = 'flex';
+        }
+
+        function closeProduct() {
+            document.getElementById('productOverlay').style.display = 'none';
+        }
+
+        function selectSize(btn) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function initAddToCart() {
+            document.getElementById('addBtn').style.display = 'none';
+            document.getElementById('qtyArea').style.display = 'flex';
+            updateGlobalBag(1);
+        }
+
+        function updateQty(change) {
+            currentQty += change;
+            if (currentQty < 1) {
+                document.getElementById('addBtn').style.display = 'block';
+                document.getElementById('qtyArea').style.display = 'none';
+                updateGlobalBag(-1);
+                currentQty = 1; 
+            } else {
+                document.getElementById('qtyVal').innerText = currentQty;
+                updateGlobalBag(change);
+            }
+        }
+
+        function updateGlobalBag(count) {
+            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const productName = document.getElementById('modalTitle').innerText;
+            const size = document.querySelector('.size-btn.active').innerText;
+            
+            // Capture the specific image currently shown in the modal
+            const imgElement = document.getElementById('modalImg');
+            const productImg = imgElement.src; 
+            
+            const productPrice = parseInt(document.getElementById('modalPrice').innerText.replace('₹',''));
+            
+            const existingIndex = cart.findIndex(i => i.name === productName && i.size === size);
+            
+            if(existingIndex !== -1) {
+                cart[existingIndex].qty = currentQty;
+                if(cart[existingIndex].qty <= 0) {
+                    cart.splice(existingIndex, 1);
+                }
+            } else if (currentQty > 0) {
+                cart.push({
+                    name: productName,
+                    price: productPrice,
+                    img: productImg, 
+                    size: size,
+                    qty: currentQty
+                });
+            }
+            
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            const newTotalCount = cart.reduce((acc, item) => acc + item.qty, 0);
+            document.getElementById('bag-count').innerText = newTotalCount;
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('productOverlay')) closeProduct();
+        }
+    </script>
+</body>
+</html>

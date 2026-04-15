@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | Men's Luxury Fragrances</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --accent: #8da399;
+            --text: #2d3436;
+            --border: #edf2f7;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: var(--glass); backdrop-filter: blur(15px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; z-index: 1000; border-bottom: 1px solid var(--border);
+        }
+        .logo { font-size: 1.4rem; font-weight: 600; letter-spacing: 6px; color: var(--accent); text-transform: uppercase; text-decoration: none; }
+        .cart-btn {
+            background: white; padding: 10px 22px; border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer;
+            display: flex; align-items: center; gap: 10px; font-weight: 600;
+            border: 1px solid var(--border); color: var(--text);
+        }
+
+        main { padding: 120px 8% 5rem; max-width: 1400px; margin: 0 auto; }
+        .back-link { display: inline-block; margin-bottom: 25px; text-decoration: none; color: var(--accent); font-weight: 600; font-size: 0.9rem; transition: 0.3s; }
+        .back-link:hover { color: var(--text); transform: translateX(-5px); }
+
+        h1 { font-weight: 300; font-size: 2.2rem; margin-bottom: 2rem; text-align: center; }
+
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2.5rem; }
+
+        .product-card {
+            background: white; border-radius: 24px; padding: 25px;
+            text-align: center; cursor: pointer; transition: 0.4s ease;
+            border: 1px solid transparent; animation: fadeIn 0.8s ease;
+        }
+        .product-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .product-card img { width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 18px; margin-bottom: 15px; }
+        .product-card h3 { font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; color: #4a5568; text-transform: uppercase; }
+        .price-tag { margin-top: 8px; font-size: 1.2rem; color: var(--accent); font-weight: 600; }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .detail-modal {
+            background: white; width: 90%; max-width: 900px; max-height: 90vh;
+            border-radius: 30px; display: flex; overflow: hidden; position: relative;
+            animation: slideUp 0.5s ease;
+        }
+        .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.5rem; z-index: 10; }
+        .modal-img { width: 45%; background: #f1f5f9; padding: 40px; display: flex; align-items: center; }
+        .modal-img img { width: 100%; height: auto; object-fit: contain; }
+        .modal-info { width: 55%; padding: 40px; overflow-y: auto; }
+
+        .mrp { text-decoration: line-through; color: #a0aec0; font-size: 0.9rem; margin-right: 10px; }
+        .discount-price { font-size: 1.8rem; font-weight: 600; color: var(--text); }
+        .off-percent { color: #38a169; font-weight: 600; font-size: 0.9rem; margin-left: 10px; }
+
+        .description { margin: 20px 0; font-size: 0.95rem; line-height: 1.6; color: #718096; }
+        .size-btn { border: 1px solid #e2e8f0; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
+        .size-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .btn-main { width: 100%; padding: 18px; border: none; border-radius: 15px; background: var(--accent); color: white; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-main:hover { background: #2d3436; }
+        .qty-controls { display: none; align-items: center; justify-content: space-between; background: #f1f5f9; border-radius: 15px; padding: 10px 20px; }
+        .qty-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--accent); padding: 0 15px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a href="index.html" class="logo">Aura</a>
+        <a href="cart.html" style="text-decoration: none;">
+            <div class="cart-btn">🛒 Bag (<span id="bag-count">0</span>)</div>
+        </a>
+    </nav>
+
+    <main>
+        <a href="products.html" class="back-link">← Back to Collections</a>
+        <h1>Men's Signature Scents</h1>
+
+        <div class="product-grid">
+            <div class="product-card" onclick="openProduct('VILLAN HYDRA', 4500, 6500, 'Deep oriental notes with saffron.', 'images/perfume-men.webp', [['50ml', 0], ['100ml', 2000]])">
+                <img src="images/perfume-men.webp" alt="Perfume 1">
+                <h3>VILLAN HYDRA</h3>
+                <div class="price-tag">₹4500</div>
+            </div>
+            <div class="product-card" onclick="openProduct('WHISKY SMOKE', 2100, 3200, 'Fresh aquatic scent.', 'images/perfume-men2.webp', [['50ml', 0], ['100ml', 1200]])">
+                <img src="images/perfume-men2.webp" alt="Perfume 2">
+                <h3>WHISKY SMOKE</h3>
+                <div class="price-tag">₹2100</div>
+            </div>
+            <div class="product-card" onclick="openProduct('VILLAIN SNAKE', 3800, 5000, 'Warm woodsy tones.', 'images/perfume-men3.webp', [['50ml', 0], ['100ml', 1500]])">
+                <img src="images/perfume-men3.webp" alt="Perfume 3">
+                <h3>VILLAIN SNAKE</h3>
+                <div class="price-tag">₹3800</div>
+            </div>
+            <div class="product-card" onclick="openProduct('BEARDO GODFATHER', 1800, 2500, 'Zesty bergamot mix.', 'images/perfume-men4.webp', [['50ml', 0], ['100ml', 1000]])">
+                <img src="images/perfume-men4.webp" alt="Perfume 4">
+                <h3>BEARDO GODFATHER</h3>
+                <div class="price-tag">₹1800</div>
+            </div>
+            <div class="product-card" onclick="openProduct('VILLAIN EAUDE PARFUM', 5500, 7500, 'Luxury leather notes.', 'images/perfume-men5.webp', [['50ml', 0], ['100ml', 3000]])">
+                <img src="images/perfume-men5.webp" alt="Perfume 5">
+                <h3>VILLAIN EAUDE PARFUM</h3>
+                <div class="price-tag">₹5500</div>
+            </div>
+            <div class="product-card" onclick="openProduct('SILVER MOUNT', 2900, 4200, 'Crisp mountain air.', 'images/perfume-men6.webp', [['50ml', 0], ['100ml', 1400]])">
+                <img src="images/perfume-men6.webp" alt="Perfume 6">
+                <h3>SILVER MOUNT</h3>
+                <div class="price-tag">₹2900</div>
+            </div>
+            <div class="product-card" onclick="openProduct('WILDSTONE HERO', 3200, 4500, 'Intense amber base.', 'images/perfume-men8.jpg', [['50ml', 0], ['100ml', 1600]])">
+                <img src="images/perfume-men8.jpg" alt="Perfume 7">
+                <h3>WILDSTONE HERO</h3>
+                <div class="price-tag">₹3200</div>
+            </div>
+            <div class="product-card" onclick="openProduct('BELLAVITA CEO MAN', 4800, 6800, 'Tobacco leaf and honey.', 'images/perfume-men7.webp', [['50ml', 0], ['100ml', 2500]])">
+                <img src="images/perfume-men7.webp" alt="Perfume 8">
+                <h3>BELLAVITA CEO MAN</h3>
+                <div class="price-tag">₹4800</div>
+            </div>
+            <div class="product-card" onclick="openProduct('WILDSTONE CHIEF', 1500, 2200, 'Daily wear clean musk.', 'images/perfume-men9.jpg', [['50ml', 0], ['100ml', 800]])">
+                <img src="images/perfume-men9.jpg" alt="Perfume 9">
+                <h3>WILDSTONE CHIEF</h3>
+                <div class="price-tag">₹1500</div>
+            </div>
+            <div class="product-card" onclick="openProduct('BELLAVITA IMPACT MAN', 2700, 3800, 'Nutmeg and clove blend.', 'images/perfume-men10.jpg', [['50ml', 0], ['100ml', 1300]])">
+                <img src="images/perfume-men10.jpg" alt="Perfume 10">
+                <h3>BELLAVITA IMPACT MAN</h3>
+                <div class="price-tag">₹2700</div>
+            </div>
+            <div class="product-card" onclick="openProduct('BELLAVITA GOAT MAN', 2400, 3500, 'Earthy pine and cedar.', 'images/perfume-men11.jpg', [['50ml', 0], ['100ml', 1100]])">
+                <img src="images/perfume-men11.jpg" alt="Perfume 11">
+                <h3>BELLAVITA GOAT MAN</h3>
+                <div class="price-tag">₹2400</div>
+            </div>
+            <div class="product-card" onclick="openProduct('BEARDO -PACK 4', 6200, 8500, 'Rare jasmine blend.', 'images/perfume-men12.jpg', [['50ml', 0], ['100ml', 3500]])">
+                <img src="images/perfume-men12.jpg" alt="Perfume 12">
+                <h3>BEARDO -PACK 4</h3>
+                <div class="price-tag">₹6200</div>
+            </div>
+            <div class="product-card" onclick="openProduct('USTRA', 3900, 5500, 'Mysterious dark floral.', 'images/perfume-men13.jpg', [['50ml', 0], ['100ml', 1800]])">
+                <img src="images/perfume-men13.jpg" alt="Perfume 13">
+                <h3>USTRA</h3>
+                <div class="price-tag">₹3900</div>
+            </div>
+            <div class="product-card" onclick="openProduct('BLEU de CHANEL', 1999, 2800, 'Peppermint and lime.', 'images/perfume-men14.jpg', [['50ml', 0], ['100ml', 900]])">
+                <img src="images/perfume-men14.jpg" alt="Perfume 14">
+                <h3>BLEU de CHANEL</h3>
+                <div class="price-tag">₹1999</div>
+            </div>
+            <div class="product-card" onclick="openProduct('BEARDO OCEAN MAN', 4200, 5800, 'Bold leather statement.', 'images/perfume-men15.jpg', [['50ml', 0], ['100ml', 2100]])">
+                <img src="images/perfume-men15.jpg" alt="Perfume 15">
+                <h3>BEARDO OCEAN MAN</h3>
+                <div class="price-tag">₹4200</div>
+            </div>
+            <div class="product-card" onclick="openProduct('WILDSTONE KING', 5100, 7200, 'Ancient resinous twist.', 'images/perfume-men16.jpg', [['50ml', 0], ['100ml', 2600]])">
+                <img src="images/perfume-men16.jpg" alt="Perfume 16">
+                <h3>WILDSTONE KING</h3>
+                <div class="price-tag">₹5100</div>
+            </div>
+            <div class="product-card" onclick="openProduct('THE MAN COMPANY', 2300, 3400, 'Lavender and patchouli.', 'images/perfume-men17.jpg', [['50ml', 0], ['100ml', 1200]])">
+                <img src="images/perfume-men17.jpg" alt="Perfume 17">
+                <h3>THE MAN COMPANY</h3>
+                <div class="price-tag">₹2300</div>
+            </div>
+            <div class="product-card" onclick="openProduct('BELLAVITA KLUB MAN', 3600, 4900, 'Green tea and woods.', 'images/perfume-men18.jpg', [['50ml', 0], ['100ml', 1700]])">
+                <img src="images/perfume-men18.jpg" alt="Perfume 18">
+                <h3>BELLAVITA KLUB MAN</h3>
+                <div class="price-tag">₹3600</div>
+            </div>
+            <div class="product-card" onclick="openProduct('NEUD', 2800, 3900, 'Sharp grapefruit edge.', 'images/perfume-men19.jpg', [['50ml', 0], ['100ml', 1300]])">
+                <img src="images/perfume-men19.jpg" alt="Perfume 19">
+                <h3>NEUD</h3>
+                <div class="price-tag">₹2800</div>
+            </div>
+            <div class="product-card" onclick="openProduct('DARK INSINCT', 4900, 6900, 'Smoky incense allure.', 'images/perfume-men20.jpg', [['50ml', 0], ['100ml', 2400]])">
+                <img src="images/perfume-men20.jpg" alt="Perfume 20">
+                <h3>DARK INSINCT</h3>
+                <div class="price-tag">₹4900</div>
+            </div>
+        </div>
+    </main>
+
+    <div class="overlay" id="productOverlay">
+        <div class="detail-modal">
+            <span class="close-modal" onclick="closeProduct()">✕</span>
+            <div class="modal-img"><img id="modalImg" src="" alt=""></div>
+            <div class="modal-info">
+                <h2 id="modalTitle">Product Name</h2>
+                <div style="margin-top: 10px;">
+                    <span class="mrp" id="modalMRP">₹0</span>
+                    <span class="discount-price" id="modalPrice">₹0</span>
+                    <span class="off-percent" id="modalOff">0% OFF</span>
+                </div>
+                <p class="description" id="modalDesc"></p>
+                <div style="margin-bottom: 10px; font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">Volume</div>
+                <div class="size-options" id="sizeOptions" style="display: flex; gap: 10px; margin-bottom: 25px;"></div>
+                <div class="action-area">
+                    <button class="btn-main" id="addBtn" onclick="initAddToCart()">Add to Bag</button>
+                    <div class="qty-controls" id="qtyArea">
+                        <button class="qty-btn" onclick="updateQty(-1)">−</button>
+                        <span class="qty-val" id="qtyVal">1</span>
+                        <button class="qty-btn" onclick="updateQty(1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQty = 1;
+        let basePrice = 0;
+        let baseMRP = 0;
+
+        window.onload = function() { updateBadge(); }
+
+        function openProduct(name, price, mrp, desc, imgPath, configs) {
+            basePrice = price;
+            baseMRP = mrp;
+            document.getElementById('modalTitle').innerText = name;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalImg').src = imgPath; 
+
+            const optionsContainer = document.getElementById('sizeOptions');
+            optionsContainer.innerHTML = '';
+            
+            configs.forEach((cfg, index) => {
+                const btn = document.createElement('div');
+                btn.className = index === 0 ? 'size-btn active' : 'size-btn';
+                btn.innerText = cfg[0];
+                btn.onclick = function() { 
+                    selectSize(this); 
+                    updatePricing(cfg[1]);
+                };
+                optionsContainer.appendChild(btn);
+            });
+
+            updatePricing(0);
+            currentQty = 1;
+            document.getElementById('qtyVal').innerText = currentQty;
+            document.getElementById('addBtn').style.display = 'block';
+            document.getElementById('qtyArea').style.display = 'none';
+            document.getElementById('productOverlay').style.display = 'flex';
+        }
+
+        function updatePricing(priceAdd) {
+            const finalPrice = basePrice + priceAdd;
+            const finalMRP = baseMRP + priceAdd;
+            document.getElementById('modalPrice').innerText = "₹" + finalPrice.toLocaleString();
+            document.getElementById('modalMRP').innerText = "₹" + finalMRP.toLocaleString();
+            const off = Math.round(((finalMRP - finalPrice) / finalMRP) * 100);
+            document.getElementById('modalOff').innerText = off + "% OFF";
+        }
+
+        function closeProduct() { document.getElementById('productOverlay').style.display = 'none'; }
+        function selectSize(btn) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function initAddToCart() {
+            document.getElementById('addBtn').style.display = 'none';
+            document.getElementById('qtyArea').style.display = 'flex';
+            updateGlobalBag(1);
+        }
+
+        function updateQty(change) {
+            currentQty += change;
+            if (currentQty < 1) {
+                document.getElementById('addBtn').style.display = 'block';
+                document.getElementById('qtyArea').style.display = 'none';
+                updateGlobalBag(-1);
+                currentQty = 1; 
+            } else {
+                document.getElementById('qtyVal').innerText = currentQty;
+                updateGlobalBag(change);
+            }
+        }
+
+        function updateGlobalBag(count) {
+            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const productName = document.getElementById('modalTitle').innerText;
+            const size = document.querySelector('.size-btn.active').innerText;
+            const productImg = document.getElementById('modalImg').getAttribute('src'); 
+            const productPrice = parseInt(document.getElementById('modalPrice').innerText.replace(/₹|,/g,''));
+            
+            const existingIndex = cart.findIndex(i => i.name === productName && i.size === size);
+            
+            if(existingIndex !== -1) {
+                cart[existingIndex].qty = currentQty;
+                if(cart[existingIndex].qty <= 0) cart.splice(existingIndex, 1);
+            } else if (count > 0) {
+                cart.push({ name: productName, price: productPrice, img: productImg, size: size, qty: currentQty });
+            }
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            updateBadge();
+        }
+
+        function updateBadge() {
+            const cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const total = cart.reduce((acc, item) => acc + item.qty, 0);
+            const badge = document.getElementById('bag-count');
+            if (badge) badge.innerText = total;
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('productOverlay')) closeProduct();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | Men's Pants</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --accent: #8da399;
+            --text: #2d3436;
+            --border: #edf2f7;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: var(--glass); backdrop-filter: blur(15px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; z-index: 1000; border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-size: 1.4rem; font-weight: 600; letter-spacing: 6px; color: var(--accent); text-transform: uppercase; text-decoration: none; }
+
+        .cart-btn {
+            background: white; padding: 10px 22px; border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer;
+            display: flex; align-items: center; gap: 10px; font-weight: 600;
+            border: 1px solid var(--border); color: var(--text);
+        }
+
+        .back-link {
+            display: inline-block; margin-bottom: 20px; text-decoration: none;
+            color: var(--accent); font-size: 0.9rem; font-weight: 600; transition: 0.3s;
+        }
+        .back-link:hover { transform: translateX(-5px); color: var(--text); }
+
+        main { padding: 120px 8% 5rem; max-width: 1400px; margin: 0 auto; }
+        h1 { font-weight: 300; font-size: 2.2rem; margin-bottom: 2rem; text-align: center; }
+
+        .shirts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .product-card {
+            background: white; border-radius: 24px; padding: 25px;
+            text-align: center; cursor: pointer; transition: 0.4s ease;
+            border: 1px solid transparent; animation: fadeIn 0.8s ease;
+        }
+
+        .product-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .product-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 18px; margin-bottom: 15px; }
+        .product-card h3 { font-size: 1rem; font-weight: 600; letter-spacing: 1px; color: #4a5568; }
+        .price-tag { margin-top: 5px; font-size: 1.1rem; color: var(--accent); font-weight: 600; }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+
+        .detail-modal {
+            background: white; width: 90%; max-width: 900px; max-height: 90vh;
+            border-radius: 30px; display: flex; overflow: hidden; position: relative;
+            animation: slideUp 0.5s ease;
+        }
+
+        .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.5rem; z-index: 10; }
+        .modal-img { width: 45%; background: #f1f5f9; }
+        .modal-img img { width: 100%; height: 100%; object-fit: cover; }
+        .modal-info { width: 55%; padding: 40px; overflow-y: auto; }
+
+        .mrp { text-decoration: line-through; color: #a0aec0; font-size: 0.9rem; margin-right: 10px; }
+        .discount-price { font-size: 1.8rem; font-weight: 600; color: var(--text); }
+        .off-percent { color: #38a169; font-weight: 600; font-size: 0.9rem; margin-left: 10px; }
+
+        .description { margin: 20px 0; font-size: 0.95rem; line-height: 1.6; color: #718096; }
+        .size-btn { border: 1px solid #e2e8f0; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
+        .size-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .btn-main { width: 100%; padding: 18px; border: none; border-radius: 15px; background: var(--accent); color: white; font-weight: 600; cursor: pointer; }
+        .qty-controls { display: none; align-items: center; justify-content: space-between; background: #f1f5f9; border-radius: 15px; padding: 10px 20px; }
+        .qty-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--accent); padding: 0 15px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        @media (max-width: 768px) {
+            .detail-modal { flex-direction: column; overflow-y: auto; }
+            .modal-img, .modal-info { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a href="products.html" class="logo">Aura</a>
+        <a href="cart.html" style="text-decoration: none;">
+            <div class="cart-btn">🛒 Bag (<span id="bag-count">0</span>)</div>
+        </a>
+    </nav>
+
+    <main>
+        <a href="products.html" class="back-link">← Back to Collections</a>
+        
+        <h1>Men's Trousers & Pants</h1>
+        <div class="shirts-grid">
+            <div class="product-card" onclick="openProduct('Tailored Jeans', 1299, 2499, 'Slim-fit dark wash jeans for a polished everyday look.', 'images/men-pants.webp')">
+                <img src="images/men-pants.webp" alt="Pants 1">
+                <h3>TAILORED JEANS</h3>
+                <div class="price-tag">₹1299</div>
+            </div>
+            
+            <div class="product-card" onclick="openProduct('Classic Cotton', 1899, 3500, 'Straight-cut cotton trousers with reinforced stitching.', 'images/men-pants2.webp')">
+                <img src="images/men-pants2.webp" alt="Pants 2">
+                <h3>CLASSIC COTTON</h3>
+                <div class="price-tag">₹1899</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Black Utility', 1599, 2999, 'Multi-pocket black cargo pants built for durability.', 'images/men-pants3.webp')">
+                <img src="images/men-pants3.webp" alt="Pants 3">
+                <h3>BLACK UTILITY</h3>
+                <div class="price-tag">₹1599</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Linen Cargo', 2100, 3800, 'Breathable linen blend cargo style, perfect for summer.', 'images/men-pants4.webp')">
+                <img src="images/men-pants4.webp" alt="Pants 4">
+                <h3>LINEN CARGO</h3>
+                <div class="price-tag">₹2100</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Urban Cargo', 999, 1899, 'Modern utility pants with tapered ankle cuffs.', 'images/men-pants5.webp')">
+                <img src="images/men-pants5.webp" alt="Pants 5">
+                <h3>URBAN CARGO</h3>
+                <div class="price-tag">₹999</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Office Formals', 2499, 4500, 'Premium wool-blend trousers with a crisp crease.', 'images/men-pants6.webp')">
+                <img src="images/men-pants6.webp" alt="Pants 6">
+                <h3>OFFICE FORMALS</h3>
+                <div class="price-tag">₹2499</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Onyx Corduroy', 1750, 3200, 'Rich texture corduroy pants for cooler weather.', 'images/men-pants7.jpg')">
+                <img src="images/men-pants7.jpg" alt="Pants 7">
+                <h3>ONYX CORDUROY</h3>
+                <div class="price-tag">₹1750</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Safari Cargo', 1450, 2600, 'Traditional khaki cargo trousers with a relaxed fit.', 'images/men-pants8.jpg')">
+                <img src="images/men-pants8.jpg" alt="Pants 8">
+                <h3>SAFARI CARGO</h3>
+                <div class="price-tag">₹1450</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Active Track', 1100, 1999, 'High-stretch performance fabric for your workouts.', 'images/men-pants9.jpg')">
+                <img src="images/men-pants9.jpg" alt="Pants 9">
+                <h3>ACTIVE TRACK</h3>
+                <div class="price-tag">₹1100</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Midnight Slacks', 1999, 3500, 'Sleek dark slacks for evening social events.', 'images/men-pants10.jpg')">
+                <img src="images/men-pants10.jpg" alt="Pants 10">
+                <h3>MIDNIGHT SLACKS</h3>
+                <div class="price-tag">₹1999</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Checkered Retro', 1650, 3100, 'Vintage-style checkered pattern with a modern cut.', 'images/men-pants11.jpg')">
+                <img src="images/men-pants11.jpg" alt="Pants 11">
+                <h3>CHECKERED RETRO</h3>
+                <div class="price-tag">₹1650</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('White Twill', 1350, 2200, 'Lightweight white twill fabric for a clean look.', 'images/men-pants12.jpg')">
+                <img src="images/men-pants12.jpg" alt="Pants 12">
+                <h3>WHITE TWILL</h3>
+                <div class="price-tag">₹1350</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Black Cargo', 1390, 2500, 'Classic heavy-duty black cargo trousers.', 'images/men-pants13.jpg')">
+                <img src="images/men-pants13.jpg" alt="Pants 13">
+                <h3>BLACK CARGO</h3>
+                <div class="price-tag">₹1390</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Sap Cargo', 1150, 2000, 'Utility cargo in a deep sap green shade.', 'images/men-pants14.jpg')">
+                <img src="images/men-pants14.jpg" alt="Pants 14">
+                <h3>SAP CARGO</h3>
+                <div class="price-tag">₹1150</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('White Formal', 1350, 2400, 'Crisp white formal trousers for summer occasions.', 'images/men-pants15.jpg')">
+                <img src="images/men-pants15.jpg" alt="Pants 15">
+                <h3>WHITE FORMAL</h3>
+                <div class="price-tag">₹1350</div>
+            </div>
+        </div>
+    </main>
+
+    <div class="overlay" id="productOverlay">
+        <div class="detail-modal">
+            <span class="close-modal" onclick="closeProduct()">✕</span>
+            <div class="modal-img">
+                <img id="modalImg" src="" alt="Selected Pants">
+            </div>
+            <div class="modal-info">
+                <h2 id="modalTitle">Product Name</h2>
+                <div style="margin-top: 10px;">
+                    <span class="mrp" id="modalMRP">₹0</span>
+                    <span class="discount-price" id="modalPrice">₹0</span>
+                    <span class="off-percent" id="modalOff">0% OFF</span>
+                </div>
+                <p class="description" id="modalDesc"></p>
+                <div style="margin-bottom: 10px;">Select Waist Size</div>
+                <div class="size-options" id="sizeOptions" style="display: flex; gap: 10px; margin-bottom: 25px;">
+                    <div class="size-btn" onclick="selectSize(this)">30</div>
+                    <div class="size-btn active" onclick="selectSize(this)">32</div>
+                    <div class="size-btn" onclick="selectSize(this)">34</div>
+                    <div class="size-btn" onclick="selectSize(this)">36</div>
+                </div>
+                <div class="action-area">
+                    <button class="btn-main" id="addBtn" onclick="initAddToCart()">Add to Cart</button>
+                    <div class="qty-controls" id="qtyArea">
+                        <button class="qty-btn" onclick="updateQty(-1)">−</button>
+                        <span class="qty-val" id="qtyVal">1</span>
+                        <button class="qty-btn" onclick="updateQty(1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQty = 1;
+
+        window.onload = function() {
+            updateBadge();
+        }
+
+        function openProduct(name, price, mrp, desc, imgPath) {
+            document.getElementById('modalTitle').innerText = name;
+            document.getElementById('modalPrice').innerText = "₹" + price;
+            document.getElementById('modalMRP').innerText = "₹" + mrp;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalImg').src = imgPath; 
+            const off = Math.round(((mrp - price) / mrp) * 100);
+            document.getElementById('modalOff').innerText = off + "% OFF";
+            currentQty = 1;
+            document.getElementById('qtyVal').innerText = currentQty;
+            document.getElementById('addBtn').style.display = 'block';
+            document.getElementById('qtyArea').style.display = 'none';
+            document.getElementById('productOverlay').style.display = 'flex';
+        }
+
+        function closeProduct() {
+            document.getElementById('productOverlay').style.display = 'none';
+        }
+
+        function selectSize(btn) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function initAddToCart() {
+            document.getElementById('addBtn').style.display = 'none';
+            document.getElementById('qtyArea').style.display = 'flex';
+            updateGlobalBag(1);
+        }
+
+        function updateQty(change) {
+            currentQty += change;
+            if (currentQty < 1) {
+                document.getElementById('addBtn').style.display = 'block';
+                document.getElementById('qtyArea').style.display = 'none';
+                updateGlobalBag(-1);
+                currentQty = 1; 
+            } else {
+                document.getElementById('qtyVal').innerText = currentQty;
+                updateGlobalBag(change);
+            }
+        }
+
+        function updateGlobalBag(count) {
+            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const productName = document.getElementById('modalTitle').innerText;
+            const size = document.querySelector('.size-btn.active').innerText;
+            
+            // This captures the EXACT path including file extension from the image element
+            const productImg = document.getElementById('modalImg').getAttribute('src'); 
+            const productPrice = parseInt(document.getElementById('modalPrice').innerText.replace('₹',''));
+            
+            const existingIndex = cart.findIndex(i => i.name === productName && i.size === size);
+            
+            if(existingIndex !== -1) {
+                cart[existingIndex].qty = currentQty;
+                if(cart[existingIndex].qty <= 0) cart.splice(existingIndex, 1);
+            } else if (count > 0) {
+                cart.push({
+                    name: productName, price: productPrice, img: productImg, 
+                    size: size, qty: currentQty
+                });
+            }
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            updateBadge();
+        }
+
+        function updateBadge() {
+            const cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const total = cart.reduce((acc, item) => acc + item.qty, 0);
+            const badge = document.getElementById('bag-count');
+            if (badge) badge.innerText = total;
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('productOverlay')) closeProduct();
+        }
+    </script>
+</body>
+</html>

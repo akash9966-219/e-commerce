@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Home | Designer Pillow Covers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fdfdfd;
+            --accent: #8da399;
+            --text: #2d3436;
+            --border: #edf2f7;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: var(--glass); backdrop-filter: blur(15px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; z-index: 1000; border-bottom: 1px solid var(--border);
+        }
+        .logo { font-size: 1.4rem; font-weight: 600; letter-spacing: 6px; color: var(--accent); text-transform: uppercase; text-decoration: none; }
+        .cart-btn {
+            background: white; padding: 10px 22px; border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer;
+            display: flex; align-items: center; gap: 10px; font-weight: 600;
+            border: 1px solid var(--border); color: var(--text);
+        }
+
+        main { padding: 120px 8% 5rem; max-width: 1400px; margin: 0 auto; }
+        .back-link { display: inline-block; margin-bottom: 25px; text-decoration: none; color: var(--accent); font-weight: 600; font-size: 0.9rem; transition: 0.3s; }
+        .back-link:hover { color: var(--text); transform: translateX(-5px); }
+
+        h1 { font-weight: 300; font-size: 2.2rem; margin-bottom: 2rem; text-align: center; }
+
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2.5rem; }
+
+        .product-card {
+            background: white; border-radius: 24px; padding: 25px;
+            text-align: center; cursor: pointer; transition: 0.4s ease;
+            border: 1px solid transparent; animation: fadeIn 0.8s ease;
+        }
+        .product-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .product-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 18px; margin-bottom: 15px; }
+        .product-card h3 { font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; color: #4a5568; text-transform: uppercase; }
+        .price-tag { margin-top: 8px; font-size: 1.2rem; color: var(--accent); font-weight: 600; }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .detail-modal {
+            background: white; width: 90%; max-width: 900px; max-height: 90vh;
+            border-radius: 30px; display: flex; overflow: hidden; position: relative;
+            animation: slideUp 0.5s ease;
+        }
+        .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.5rem; z-index: 10; }
+        .modal-img { width: 45%; background: #f8fafc; padding: 40px; display: flex; align-items: center; }
+        .modal-img img { width: 100%; height: auto; object-fit: contain; border-radius: 15px; }
+        .modal-info { width: 55%; padding: 40px; overflow-y: auto; }
+
+        .mrp { text-decoration: line-through; color: #a0aec0; font-size: 0.9rem; margin-right: 10px; }
+        .discount-price { font-size: 1.8rem; font-weight: 600; color: var(--text); }
+        .off-percent { color: #38a169; font-weight: 600; font-size: 0.9rem; margin-left: 10px; }
+
+        .description { margin: 20px 0; font-size: 0.95rem; line-height: 1.6; color: #718096; }
+        .size-btn { border: 1px solid #e2e8f0; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; transition: 0.3s; font-weight: 600; }
+        .size-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .btn-main { width: 100%; padding: 18px; border: none; border-radius: 15px; background: var(--accent); color: white; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-main:hover { background: #2d3436; }
+        
+        .qty-controls { display: none; align-items: center; justify-content: space-between; background: #f1f5f9; border-radius: 15px; padding: 10px 20px; }
+        .qty-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--accent); padding: 0 15px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a href="index.html" class="logo">Aura</a>
+        <a href="cart.html" style="text-decoration: none;">
+            <div class="cart-btn">🛒 Bag (<span id="bag-count">0</span>)</div>
+        </a>
+    </nav>
+
+    <main>
+        <a href="products.html" class="back-link">← Back to Collections</a>
+        <h1>Designer Pillow Covers</h1>
+
+        <div class="product-grid">
+            <div class="product-card" onclick="openProduct('JAIPURI MANDALA', 350, 600, 'Authentic Jaipuri hand-block printed cotton.', 'images/pillo.jpg', [['16x16', 0], ['18x18', 100]])">
+                <img src="images/pillo.jpg" alt="Cover 1">
+                <h3>JAIPURI MANDALA</h3>
+                <div class="price-tag">₹350</div>
+            </div>
+            <div class="product-card" onclick="openProduct('PLUSH VELVET TEAL', 499, 850, 'Ultra-soft teal velvet with hidden zipper.', 'images/pillo2.jpg', [['16x16', 0], ['18x18', 150]])">
+                <img src="images/pillo2.jpg" alt="Cover 2">
+                <h3>PLUSH VELVET TEAL</h3>
+                <div class="price-tag">₹499</div>
+            </div>
+            <div class="product-card" onclick="openProduct('BOHO TASSEL', 420, 700, 'Cotton linen with decorative handmade tassels.', 'images/pillo3.jpg', [['16x16', 0], ['20x20', 200]])">
+                <img src="images/pillo3.jpg" alt="Cover 3">
+                <h3>BOHO TASSEL</h3>
+                <div class="price-tag">₹420</div>
+            </div>
+            <div class="product-card" onclick="openProduct('GEOMETRIC GOLD', 550, 990, 'Metallic foil geometric print on premium fabric.', 'images/pillo4.jpg', [['16x16', 0], ['18x18', 150]])">
+                <img src="images/pillo4.jpg" alt="Cover 4">
+                <h3>GEOMETRIC GOLD</h3>
+                <div class="price-tag">₹550</div>
+            </div>
+            <div class="product-card" onclick="openProduct('SILKY MOSS', 650, 1100, 'Premium moss green silk with subtle sheen.', 'images/pillo5.jpg', [['16x16', 0], ['Standard', 200]])">
+                <img src="images/pillo5.jpg" alt="Cover 5">
+                <h3>SILKY MOSS</h3>
+                <div class="price-tag">₹650</div>
+            </div>
+            <div class="product-card" onclick="openProduct('SATIN SILK CHAMPAGNE', 450, 750, 'Smooth champagne satin for a royal aesthetic.', 'images/pillo6.jpg', [['16x16', 0], ['18x18', 100]])">
+                <img src="images/pillo6.jpg" alt="Cover 6">
+                <h3>SATIN SILK CHAMPAGNE</h3>
+                <div class="price-tag">₹450</div>
+            </div>
+            <div class="product-card" onclick="openProduct('IKAT WEAVE PINK', 380, 650, 'Traditional Ikat pattern woven in vibrant pink.', 'images/pillo7.jpg', [['16x16', 0]])">
+                <img src="images/pillo7.jpg" alt="Cover 7">
+                <h3>IKAT WEAVE PINK</h3>
+                <div class="price-tag">₹380</div>
+            </div>
+            <div class="product-card" onclick="openProduct('SEQUIN GLAM', 799, 1300, 'Festive reversible sequins for a modern sparkle.', 'images/pillo8.jpg', [['16x16', 0]])">
+                <img src="images/pillo8.jpg" alt="Cover 8">
+                <h3>SEQUIN GLAM</h3>
+                <div class="price-tag">₹799</div>
+            </div>
+            <div class="product-card" onclick="openProduct('MODERN ABSTRACT', 399, 700, 'Minimalist line art on high-quality canvas.', 'images/pillo9.jpg', [['16x16', 0], ['18x18', 100]])">
+                <img src="images/pillo9.jpg" alt="Cover 9">
+                <h3>MODERN ABSTRACT</h3>
+                <div class="price-tag">₹399</div>
+            </div>
+            <div class="product-card" onclick="openProduct('VINTAGE LACE', 480, 800, 'Off-white cotton with elegant lace borders.', 'images/pillo10.jpg', [['16x16', 0]])">
+                <img src="images/pillo10.jpg" alt="Cover 10">
+                <h3>VINTAGE LACE</h3>
+                <div class="price-tag">₹480</div>
+            </div>
+            <div class="product-card" onclick="openProduct('MARBLE TEXTURED PINK', 350, 600, 'Soft polyester blend with pink marble texture.', 'images/pillo11.jpg', [['16x16', 0]])">
+                <img src="images/pillo11.jpg" alt="Cover 11">
+                <h3>MARBLE TEXTURED PINK</h3>
+                <div class="price-tag">₹350</div>
+            </div>
+            <div class="product-card" onclick="openProduct('AZTEC PRINT', 440, 750, 'Classic tribal Aztec geometric designs.', 'images/pillo12.jpg', [['16x16', 0], ['20x20', 160]])">
+                <img src="images/pillo12.jpg" alt="Cover 12">
+                <h3>AZTEC PRINT</h3>
+                <div class="price-tag">₹440</div>
+            </div>
+            <div class="product-card" onclick="openProduct('QUILTED DIAMOND', 590, 950, 'Comfortable padded quilted diamond design.', 'images/pillo13.jpg', [['18x18', 0]])">
+                <img src="images/pillo13.jpg" alt="Cover 13">
+                <h3>QUILTED DIAMOND</h3>
+                <div class="price-tag">₹590</div>
+            </div>
+            <div class="product-card" onclick="openProduct('TROPICAL BLUE LEAF', 320, 550, 'Blue palm leaf patterns on organic cotton.', 'images/pillo14.jpg', [['16x16', 0]])">
+                <img src="images/pillo14.jpg" alt="Cover 14">
+                <h3>TROPICAL BLUE LEAF</h3>
+                <div class="price-tag">₹320</div>
+            </div>
+            
+        </div>
+    </main>
+
+    <div class="overlay" id="productOverlay">
+        <div class="detail-modal">
+            <span class="close-modal" onclick="closeProduct()">✕</span>
+            <div class="modal-img"><img id="modalImg" src="" alt=""></div>
+            <div class="modal-info">
+                <h2 id="modalTitle">Cover Name</h2>
+                <div style="margin-top: 10px;">
+                    <span class="mrp" id="modalMRP">₹0</span>
+                    <span class="discount-price" id="modalPrice">₹0</span>
+                    <span class="off-percent" id="modalOff">0% OFF</span>
+                </div>
+                <p class="description" id="modalDesc"></p>
+                <div style="margin-bottom: 10px; font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">Select Size</div>
+                <div class="size-options" id="sizeOptions" style="display: flex; gap: 10px; margin-bottom: 25px;"></div>
+                <div class="action-area">
+                    <button class="btn-main" id="addBtn" onclick="initAddToCart()">Add to Bag</button>
+                    <div class="qty-controls" id="qtyArea">
+                        <button class="qty-btn" onclick="updateQty(-1)">−</button>
+                        <span class="qty-val" id="qtyVal">1</span>
+                        <button class="qty-btn" onclick="updateQty(1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQty = 1;
+        let basePrice = 0;
+        let baseMRP = 0;
+
+        window.onload = function() { updateBadge(); }
+
+        function openProduct(name, price, mrp, desc, imgPath, configs) {
+            basePrice = price;
+            baseMRP = mrp;
+            document.getElementById('modalTitle').innerText = name;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalImg').src = imgPath; 
+
+            const optionsContainer = document.getElementById('sizeOptions');
+            optionsContainer.innerHTML = '';
+            
+            configs.forEach((cfg, index) => {
+                const btn = document.createElement('div');
+                btn.className = index === 0 ? 'size-btn active' : 'size-btn';
+                btn.innerText = cfg[0];
+                btn.onclick = function() { 
+                    selectSize(this); 
+                    updatePricing(cfg[1]);
+                };
+                optionsContainer.appendChild(btn);
+            });
+
+            updatePricing(0);
+            currentQty = 1;
+            document.getElementById('qtyVal').innerText = currentQty;
+            document.getElementById('addBtn').style.display = 'block';
+            document.getElementById('qtyArea').style.display = 'none';
+            document.getElementById('productOverlay').style.display = 'flex';
+        }
+
+        function updatePricing(priceAdd) {
+            const finalPrice = basePrice + priceAdd;
+            const finalMRP = baseMRP + priceAdd;
+            document.getElementById('modalPrice').innerText = "₹" + finalPrice.toLocaleString();
+            document.getElementById('modalMRP').innerText = "₹" + finalMRP.toLocaleString();
+            const off = Math.round(((finalMRP - finalPrice) / finalMRP) * 100);
+            document.getElementById('modalOff').innerText = off + "% OFF";
+        }
+
+        function closeProduct() { document.getElementById('productOverlay').style.display = 'none'; }
+        
+        function selectSize(btn) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function initAddToCart() {
+            document.getElementById('addBtn').style.display = 'none';
+            document.getElementById('qtyArea').style.display = 'flex';
+            updateGlobalBag(1);
+        }
+
+        function updateQty(change) {
+            currentQty += change;
+            if (currentQty < 1) {
+                document.getElementById('addBtn').style.display = 'block';
+                document.getElementById('qtyArea').style.display = 'none';
+                updateGlobalBag(-1);
+                currentQty = 1; 
+            } else {
+                document.getElementById('qtyVal').innerText = currentQty;
+                updateGlobalBag(change);
+            }
+        }
+
+        function updateGlobalBag(count) {
+            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const productName = document.getElementById('modalTitle').innerText;
+            const size = document.querySelector('.size-btn.active').innerText;
+            
+            // KEY CAPTURE: Always grabs exact image displayed in modal
+            const productImg = document.getElementById('modalImg').getAttribute('src'); 
+            const productPrice = parseInt(document.getElementById('modalPrice').innerText.replace(/₹|,/g,''));
+            
+            const existingIndex = cart.findIndex(i => i.name === productName && i.size === size);
+            
+            if(existingIndex !== -1) {
+                cart[existingIndex].qty = currentQty;
+                if(cart[existingIndex].qty <= 0) cart.splice(existingIndex, 1);
+            } else if (count > 0) {
+                cart.push({ name: productName, price: productPrice, img: productImg, size: size, qty: currentQty });
+            }
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            updateBadge();
+        }
+
+        function updateBadge() {
+            const cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const total = cart.reduce((acc, item) => acc + item.qty, 0);
+            const badge = document.getElementById('bag-count');
+            if (badge) badge.innerText = total;
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('productOverlay')) closeProduct();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | Premium Laptops</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --accent: #8da399;
+            --text: #2d3436;
+            --border: #edf2f7;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: var(--glass); backdrop-filter: blur(15px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; z-index: 1000; border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-size: 1.4rem; font-weight: 600; letter-spacing: 6px; color: var(--accent); text-transform: uppercase; text-decoration: none; }
+
+        .cart-btn {
+            background: white; padding: 10px 22px; border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer;
+            display: flex; align-items: center; gap: 10px; font-weight: 600;
+            border: 1px solid var(--border); color: var(--text);
+        }
+
+        .back-link {
+            display: inline-block; margin-bottom: 20px; text-decoration: none;
+            color: var(--accent); font-size: 0.9rem; font-weight: 600; transition: 0.3s;
+        }
+        .back-link:hover { transform: translateX(-5px); color: var(--text); }
+
+        main { padding: 120px 8% 5rem; max-width: 1400px; margin: 0 auto; }
+        h1 { font-weight: 300; font-size: 2.2rem; margin-bottom: 2rem; text-align: center; }
+
+        .shirts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .product-card {
+            background: white; border-radius: 24px; padding: 25px;
+            text-align: center; cursor: pointer; transition: 0.4s ease;
+            border: 1px solid transparent; animation: fadeIn 0.8s ease;
+        }
+
+        .product-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .product-card img { width: 100%; aspect-ratio: 16/10; object-fit: contain; border-radius: 18px; margin-bottom: 15px; }
+        .product-card h3 { font-size: 1rem; font-weight: 600; letter-spacing: 1px; color: #4a5568; }
+        .price-tag { margin-top: 5px; font-size: 1.1rem; color: var(--accent); font-weight: 600; }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+
+        .detail-modal {
+            background: white; width: 90%; max-width: 950px; max-height: 90vh;
+            border-radius: 30px; display: flex; overflow: hidden; position: relative;
+            animation: slideUp 0.5s ease;
+        }
+
+        .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.5rem; z-index: 10; }
+        .modal-img { width: 45%; background: #fff; padding: 30px; display: flex; align-items: center; }
+        .modal-img img { width: 100%; height: auto; object-fit: contain; }
+        .modal-info { width: 55%; padding: 40px; overflow-y: auto; }
+
+        .mrp { text-decoration: line-through; color: #a0aec0; font-size: 0.9rem; margin-right: 10px; }
+        .discount-price { font-size: 1.8rem; font-weight: 600; color: var(--text); }
+        .off-percent { color: #38a169; font-weight: 600; font-size: 0.9rem; margin-left: 10px; }
+
+        .description { margin: 20px 0; font-size: 0.95rem; line-height: 1.6; color: #718096; }
+        
+        .variant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .size-btn { border: 1px solid #e2e8f0; padding: 12px 8px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; transition: 0.3s; text-align: center; line-height: 1.4; }
+        .size-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .btn-main { width: 100%; padding: 18px; border: none; border-radius: 15px; background: var(--accent); color: white; font-weight: 600; cursor: pointer; }
+        .qty-controls { display: none; align-items: center; justify-content: space-between; background: #f1f5f9; border-radius: 15px; padding: 10px 20px; }
+        .qty-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--accent); padding: 0 15px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        @media (max-width: 768px) {
+            .detail-modal { flex-direction: column; overflow-y: auto; }
+            .modal-img, .modal-info { width: 100%; }
+            .variant-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a href="products.html" class="logo">Aura</a>
+        <a href="cart.html" style="text-decoration: none;">
+            <div class="cart-btn">🛒 Bag (<span id="bag-count">0</span>)</div>
+        </a>
+    </nav>
+
+    <main>
+        <a href="products.html" class="back-link">← Back to Collections</a>
+        
+        <h1>Laptops & Computing</h1>
+        <div class="shirts-grid">
+            <div class="product-card" onclick="openProduct('DELL Inspiron', 55000, 75000, 'Reliable business performance with a stunning FHD display.', 'images/laptop.jpg', 26)">
+                <img src="images/laptop.jpg" alt="Laptop 1">
+                <h3>DELL INSPIRON</h3>
+                <div class="price-tag">₹55,000</div>
+            </div>
+            
+            <div class="product-card" onclick="openProduct('DELL Gaming Pro', 95000, 135000, 'High refresh rate screen with RTX Series Graphics.', 'images/laptop2.jpg', 30)">
+                <img src="images/laptop2.jpg" alt="Laptop 2">
+                <h3>DELL GAMING PRO</h3>
+                <div class="price-tag">₹92,000</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('DELL XPS M3', 114000, 125000, 'Premium ultrabook design with industrial grade cooling.', 'images/laptop3.jpg', 8)">
+                <img src="images/laptop3.jpg" alt="Laptop 3">
+                <h3>DELL XPS M3</h3>
+                <div class="price-tag">₹67,000</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('ASUS Vivobook Flip', 82000, 110000, '2-in-1 detachable laptop with touch support.', 'images/laptop4.jpg', 25)">
+                <img src="images/laptop4.jpg" alt="Laptop 4">
+                <h3>ASUS VIVOBOOK FLIP</h3>
+                <div class="price-tag">₹82,000</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('ASUS Vivobook 15', 48000, 60000, 'Perfect for students and daily office productivity.', 'images/laptop5.jpg', 20)">
+                <img src="images/laptop5.jpg" alt="Laptop 5">
+                <h3>ASUS VIVOBOOK 15</h3>
+                <div class="price-tag">₹48,000</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('ASUS Vivobook ROG', 125000, 180000, 'Top-tier gaming experience with liquid metal cooling.', 'images/laptop6.jpg', 31)">
+                <img src="images/laptop6.jpg" alt="Laptop 6">
+                <h3>ASUS VIVOBOOK ROG</h3>
+                <div class="price-tag">₹86,000</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('SAMSUNG ThinkPro', 72000, 95000, 'Military-grade durability with encrypted enterprise security.', 'images/laptop7.jpg', 24)">
+                <img src="images/laptop7.jpg" alt="Laptop 7">
+                <h3>SAMSUNG THINKPRO</h3>
+                <div class="price-tag">₹72,000</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('SAMSUNG Ultra 360', 65000, 85000, 'Lightweight 360-degree hinge with AMOLED touch display.', 'images/laptop8.jpg', 23)">
+                <img src="images/laptop8.jpg" alt="Laptop 8">
+                <h3>SAMSUNG ULTRA 360</h3>
+                <div class="price-tag">₹65,000</div>
+            </div>
+        </div>
+    </main>
+
+    <div class="overlay" id="productOverlay">
+        <div class="detail-modal">
+            <span class="close-modal" onclick="closeProduct()">✕</span>
+            <div class="modal-img">
+                <img id="modalImg" src="" alt="Selected Laptop">
+            </div>
+            <div class="modal-info">
+                <h2 id="modalTitle">Product Name</h2>
+                <div style="margin-top: 10px;">
+                    <span class="mrp" id="modalMRP">₹0</span>
+                    <span class="discount-price" id="modalPrice">₹0</span>
+                    <span class="off-percent" id="modalOff">0% OFF</span>
+                </div>
+                <p class="description" id="modalDesc"></p>
+                <div style="margin-bottom: 12px; font-weight: 600; font-size: 0.9rem;">Choose Hardware Variant</div>
+                
+                <div class="variant-grid" id="variantOptions">
+                    <div class="size-btn active" onclick="updateConfig(this, 0)">16GB RAM<br>256GB ROM</div>
+                    <div class="size-btn" onclick="updateConfig(this, 7000)">16GB RAM<br>512GB ROM</div>
+                    <div class="size-btn" onclick="updateConfig(this, 15000)">32GB RAM<br>512GB ROM</div>
+                    <div class="size-btn" onclick="updateConfig(this, 28000)">32GB RAM<br>1024GB ROM</div>
+                </div>
+
+                <div class="action-area">
+                    <button class="btn-main" id="addBtn" onclick="initAddToCart()">Add to Bag</button>
+                    <div class="qty-controls" id="qtyArea">
+                        <button class="qty-btn" onclick="updateQty(-1)">−</button>
+                        <span class="qty-val" id="qtyVal">1</span>
+                        <button class="qty-btn" onclick="updateQty(1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQty = 1;
+        let basePrice = 0;
+        let baseMRP = 0;
+
+        window.onload = function() {
+            updateBadge();
+        }
+
+        function openProduct(name, price, mrp, desc, imgPath, discount) {
+            basePrice = price;
+            baseMRP = mrp;
+            document.getElementById('modalTitle').innerText = name;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalImg').src = imgPath; 
+
+            // Reset selection to first variant
+            document.querySelectorAll('.size-btn').forEach((btn, i) => {
+                btn.classList.remove('active');
+                if(i === 0) btn.classList.add('active');
+            });
+
+            updateDisplayValues(0);
+
+            currentQty = 1;
+            document.getElementById('qtyVal').innerText = currentQty;
+            document.getElementById('addBtn').style.display = 'block';
+            document.getElementById('qtyArea').style.display = 'none';
+            document.getElementById('productOverlay').style.display = 'flex';
+        }
+
+        function updateConfig(btn, priceAdd) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateDisplayValues(priceAdd);
+        }
+
+        function updateDisplayValues(priceAdd) {
+            const newPrice = basePrice + priceAdd;
+            const newMRP = baseMRP + priceAdd;
+            
+            document.getElementById('modalPrice').innerText = "₹" + newPrice.toLocaleString();
+            document.getElementById('modalMRP').innerText = "₹" + newMRP.toLocaleString();
+            const off = Math.round(((newMRP - newPrice) / newMRP) * 100);
+            document.getElementById('modalOff').innerText = off + "% OFF";
+        }
+
+        function closeProduct() {
+            document.getElementById('productOverlay').style.display = 'none';
+        }
+
+        function initAddToCart() {
+            document.getElementById('addBtn').style.display = 'none';
+            document.getElementById('qtyArea').style.display = 'flex';
+            updateGlobalBag(1);
+        }
+
+        function updateQty(change) {
+            currentQty += change;
+            if (currentQty < 1) {
+                document.getElementById('addBtn').style.display = 'block';
+                document.getElementById('qtyArea').style.display = 'none';
+                updateGlobalBag(-1);
+                currentQty = 1; 
+            } else {
+                document.getElementById('qtyVal').innerText = currentQty;
+                updateGlobalBag(change);
+            }
+        }
+
+        function updateGlobalBag(count) {
+            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const productName = document.getElementById('modalTitle').innerText;
+            const variant = document.querySelector('.size-btn.active').innerText.replace('\n', ' ');
+            
+            // This captures exact image path including extension from attribute
+            const productImg = document.getElementById('modalImg').getAttribute('src'); 
+            const productPrice = parseInt(document.getElementById('modalPrice').innerText.replace(/₹|,/g,''));
+            
+            const existingIndex = cart.findIndex(i => i.name === productName && i.size === variant);
+            
+            if(existingIndex !== -1) {
+                cart[existingIndex].qty = currentQty;
+                if(cart[existingIndex].qty <= 0) cart.splice(existingIndex, 1);
+            } else if (count > 0) {
+                cart.push({
+                    name: productName, price: productPrice, img: productImg, 
+                    size: variant, qty: currentQty
+                });
+            }
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            updateBadge();
+        }
+
+        function updateBadge() {
+            const cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const total = cart.reduce((acc, item) => acc + item.qty, 0);
+            const badge = document.getElementById('bag-count');
+            if (badge) badge.innerText = total;
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('productOverlay')) closeProduct();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | Designer Cutlery & Spoons</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --accent: #8da399;
+            --text: #2d3436;
+            --border: #edf2f7;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: var(--glass); backdrop-filter: blur(15px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; z-index: 1000; border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-size: 1.4rem; font-weight: 600; letter-spacing: 6px; color: var(--accent); text-transform: uppercase; text-decoration: none; }
+
+        .cart-btn {
+            background: white; padding: 10px 22px; border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer;
+            display: flex; align-items: center; gap: 10px; font-weight: 600;
+            border: 1px solid var(--border); color: var(--text);
+        }
+
+        .back-link {
+            display: inline-block; margin-bottom: 20px; text-decoration: none;
+            color: var(--accent); font-size: 0.9rem; font-weight: 600; transition: 0.3s;
+        }
+        .back-link:hover { transform: translateX(-5px); color: var(--text); }
+
+        main { padding: 120px 8% 5rem; max-width: 1400px; margin: 0 auto; }
+        h1 { font-weight: 300; font-size: 2.2rem; margin-bottom: 2rem; text-align: center; }
+
+        .spoon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .product-card {
+            background: white; border-radius: 24px; padding: 25px;
+            text-align: center; cursor: pointer; transition: 0.4s ease;
+            border: 1px solid transparent; animation: fadeIn 0.8s ease;
+        }
+
+        .product-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .product-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 18px; margin-bottom: 15px; }
+        .product-card h3 { font-size: 0.9rem; font-weight: 600; letter-spacing: 0.5px; color: #4a5568; height: 40px; display: flex; align-items: center; justify-content: center; }
+        .price-tag { margin-top: 5px; font-size: 1.1rem; color: var(--accent); font-weight: 600; }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+
+        .detail-modal {
+            background: white; width: 90%; max-width: 850px; max-height: 90vh;
+            border-radius: 30px; display: flex; overflow: hidden; position: relative;
+            animation: slideUp 0.5s ease;
+        }
+
+        .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.5rem; z-index: 10; }
+        .modal-img { width: 45%; background: #f8fafc; padding: 30px; display: flex; align-items: center; }
+        .modal-img img { width: 100%; height: auto; object-fit: contain; }
+        .modal-info { width: 55%; padding: 40px; overflow-y: auto; }
+
+        .mrp { text-decoration: line-through; color: #a0aec0; font-size: 0.9rem; margin-right: 10px; }
+        .discount-price { font-size: 1.8rem; font-weight: 600; color: var(--text); }
+        .off-percent { color: #38a169; font-weight: 600; font-size: 0.9rem; margin-left: 10px; }
+
+        .description { margin: 20px 0; font-size: 0.95rem; line-height: 1.6; color: #718096; }
+        .size-btn { border: 1px solid #e2e8f0; padding: 12px 10px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; transition: 0.3s; text-align: center; flex: 1; font-weight: 600; }
+        .size-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .btn-main { width: 100%; padding: 18px; border: none; border-radius: 15px; background: var(--accent); color: white; font-weight: 600; cursor: pointer; }
+        .qty-controls { display: none; align-items: center; justify-content: space-between; background: #f1f5f9; border-radius: 15px; padding: 10px 20px; }
+        .qty-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--accent); padding: 0 15px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        @media (max-width: 768px) {
+            .detail-modal { flex-direction: column; overflow-y: auto; }
+            .modal-img, .modal-info { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a href="products.html" class="logo">Aura</a>
+        <a href="cart.html" style="text-decoration: none;">
+            <div class="cart-btn">🛒 Bag (<span id="bag-count">0</span>)</div>
+        </a>
+    </nav>
+
+    <main>
+        <a href="products.html" class="back-link">← Back to Collections</a>
+        
+        <h1>Designer Cutlery</h1>
+        <div class="spoon-grid">
+            <div class="product-card" onclick="openProduct('Mirror Finish Steel Spoon', 149, 299, 'High-grade 304 stainless steel with a high-gloss mirror finish.', 'images/spoon.jpg')">
+                <img src="images/spoon.jpg" alt="Spoon 1">
+                <h3>MIRROR FINISH STEEL</h3>
+                <div class="price-tag">₹149</div>
+            </div>
+            
+            <div class="product-card" onclick="openProduct('Royal Gold Plated Set', 399, 850, 'Luxury 24k gold-toned PVD coating on surgical steel.', 'images/spoon2.jpg')">
+                <img src="images/spoon2.jpg" alt="Spoon 2">
+                <h3>ROYAL GOLD PLATED</h3>
+                <div class="price-tag">₹399</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Matte Black Obsidian', 249, 499, 'Sleek matte black finish, perfect for modern minimalist dining.', 'images/spoon3.jpg')">
+                <img src="images/spoon3.jpg" alt="Spoon 3">
+                <h3>MATTE BLACK OBSIDIAN</h3>
+                <div class="price-tag">₹249</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Vintage Rosewood Handle', 299, 599, 'Stainless steel spoons with ergonomically carved rosewood handles.', 'images/spoon4.jpg')">
+                <img src="images/spoon4.jpg" alt="Spoon 4">
+                <h3>VINTAGE ROSEWOOD</h3>
+                <div class="price-tag">₹299</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Copper Hammered Spoon', 199, 399, 'Traditional hammered copper texture with a steel core.', 'images/spoon5.jpg')">
+                <img src="images/spoon5.jpg" alt="Spoon 5">
+                <h3>COPPER HAMMERED</h3>
+                <div class="price-tag">₹199</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Iridescent Rainbow Spoon', 180, 350, 'Titanium-plated colorful finish that changes with the light.', 'images/spoon6.jpg')">
+                <img src="images/spoon6.jpg" alt="Spoon 6">
+                <h3>IRIDESCENT RAINBOW</h3>
+                <div class="price-tag">₹180</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Classic Satin Finish', 129, 250, 'Brushed satin steel for a fingerprint-resistant look.', 'images/spoon8.jpg')">
+                <img src="images/spoon8.jpg" alt="Spoon 7">
+                <h3>CLASSIC SATIN FINISH</h3>
+                <div class="price-tag">₹129</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Artisan Ceramic Tip', 320, 650, 'Unique ceramic handles with hand-painted delicate motifs.', 'images/spoon9.jpg')">
+                <img src="images/spoon9.jpg" alt="Spoon 8">
+                <h3>ARTISAN CERAMIC TIP</h3>
+                <div class="price-tag">₹320</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Vintage Hammered Gold', 349, 699, 'Vintage-styled hammered texture with a soft gold finish.', 'images/spoon10.jpg')">
+                <img src="images/spoon10.jpg" alt="Spoon 9">
+                <h3>VINTAGE HAMMERED GOLD</h3>
+                <div class="price-tag">₹349</div>
+            </div>
+
+            <div class="product-card" onclick="openProduct('Senica Gold Edition', 499, 999, 'Premium Senica series featuring weighted handles and gold accents.', 'images/spoon11.jpg')">
+                <img src="images/spoon11.jpg" alt="Spoon 10">
+                <h3>SENICA GOLD EDITION</h3>
+                <div class="price-tag">₹499</div>
+            </div>
+        </div>
+    </main>
+
+    <div class="overlay" id="productOverlay">
+        <div class="detail-modal">
+            <span class="close-modal" onclick="closeProduct()">✕</span>
+            <div class="modal-img">
+                <img id="modalImg" src="" alt="Selected Spoon">
+            </div>
+            <div class="modal-info">
+                <h2 id="modalTitle">Product Name</h2>
+                <div style="margin-top: 10px;">
+                    <span class="mrp" id="modalMRP">₹0</span>
+                    <span class="discount-price" id="modalPrice">₹0</span>
+                    <span class="off-percent" id="modalOff">0% OFF</span>
+                </div>
+                <p class="description" id="modalDesc"></p>
+                <div style="margin-bottom: 12px; font-weight: 600; font-size: 0.9rem;">Select Set Size</div>
+                <div class="size-options" id="sizeOptions" style="display: flex; gap: 10px; margin-bottom: 25px;">
+                    <div class="size-btn active" onclick="updatePricing(this, 1, 0)">Set of 2</div>
+                    <div class="size-btn" onclick="updatePricing(this, 2.8, 8)">Set of 6</div>
+                    <div class="size-btn" onclick="updatePricing(this, 5.2, 15)">Set of 12</div>
+                </div>
+                <div class="action-area">
+                    <button class="btn-main" id="addBtn" onclick="initAddToCart()">Add to Bag</button>
+                    <div class="qty-controls" id="qtyArea">
+                        <button class="qty-btn" onclick="updateQty(-1)">−</button>
+                        <span class="qty-val" id="qtyVal">1</span>
+                        <button class="qty-btn" onclick="updateQty(1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQty = 1;
+        let basePrice = 0;
+        let baseMRP = 0;
+
+        window.onload = function() {
+            updateBadge();
+        }
+
+        function openProduct(name, price, mrp, desc, imgPath) {
+            basePrice = price;
+            baseMRP = mrp;
+            document.getElementById('modalTitle').innerText = name;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalImg').src = imgPath; 
+
+            document.querySelectorAll('.size-btn').forEach((btn, i) => {
+                btn.classList.remove('active');
+                if(i === 0) btn.classList.add('active');
+            });
+
+            calculateDisplay(1, 0);
+
+            currentQty = 1;
+            document.getElementById('qtyVal').innerText = currentQty;
+            document.getElementById('addBtn').style.display = 'block';
+            document.getElementById('qtyArea').style.display = 'none';
+            document.getElementById('productOverlay').style.display = 'flex';
+        }
+
+        function updatePricing(btn, multiplier, bulkDiscount) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            calculateDisplay(multiplier, bulkDiscount);
+        }
+
+        function calculateDisplay(multiplier, bulkDiscount) {
+            const subtotal = basePrice * multiplier;
+            const finalPrice = Math.round(subtotal * (1 - bulkDiscount/100));
+            const finalMRP = Math.round(baseMRP * multiplier);
+            
+            document.getElementById('modalPrice').innerText = "₹" + finalPrice.toLocaleString();
+            document.getElementById('modalMRP').innerText = "₹" + finalMRP.toLocaleString();
+            const off = Math.round(((finalMRP - finalPrice) / finalMRP) * 100);
+            document.getElementById('modalOff').innerText = off + "% OFF";
+        }
+
+        function closeProduct() {
+            document.getElementById('productOverlay').style.display = 'none';
+        }
+
+        function initAddToCart() {
+            document.getElementById('addBtn').style.display = 'none';
+            document.getElementById('qtyArea').style.display = 'flex';
+            updateGlobalBag(1);
+        }
+
+        function updateQty(change) {
+            currentQty += change;
+            if (currentQty < 1) {
+                document.getElementById('addBtn').style.display = 'block';
+                document.getElementById('qtyArea').style.display = 'none';
+                updateGlobalBag(-1);
+                currentQty = 1; 
+            } else {
+                document.getElementById('qtyVal').innerText = currentQty;
+                updateGlobalBag(change);
+            }
+        }
+
+        function updateGlobalBag(count) {
+            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const productName = document.getElementById('modalTitle').innerText;
+            const setSize = document.querySelector('.size-btn.active').innerText;
+            
+            // KEY FIX: captures exact image path including extension from attribute
+            const productImg = document.getElementById('modalImg').getAttribute('src'); 
+            const productPrice = parseInt(document.getElementById('modalPrice').innerText.replace(/₹|,/g,''));
+            
+            const existingIndex = cart.findIndex(i => i.name === productName && i.size === setSize);
+            
+            if(existingIndex !== -1) {
+                cart[existingIndex].qty = currentQty;
+                if(cart[existingIndex].qty <= 0) cart.splice(existingIndex, 1);
+            } else if (count > 0) {
+                cart.push({
+                    name: productName, price: productPrice, img: productImg, 
+                    size: setSize, qty: currentQty
+                });
+            }
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            updateBadge();
+        }
+
+        function updateBadge() {
+            const cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const total = cart.reduce((acc, item) => acc + item.qty, 0);
+            const badge = document.getElementById('bag-count');
+            if (badge) badge.innerText = total;
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('productOverlay')) closeProduct();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | Collections</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --accent: #8da399;
+            --text: #2d3436;
+            --border: #edf2f7;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        /* Prevent layout jumping */
+        html { scroll-behavior: smooth; overflow-y: scroll; }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Top Header */
+        .top-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 80px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            padding: 0 4%;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-left { display: flex; align-items: center; gap: 15px; }
+
+        .menu-toggle {
+            display: none;
+            background: white;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 6px;
+            color: var(--accent);
+            text-transform: uppercase;
+            text-decoration: none;
+        }
+
+        .cart-btn {
+            background: white;
+            padding: 10px 22px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        /* Sidebar - Hardware accelerated for stability */
+        aside {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 100px 1.5rem 2rem;
+            z-index: 900;
+            overflow-y: auto;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+
+        .menu-item { margin-bottom: 0.5rem; }
+        
+        .menu-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 12px;
+            transition: background 0.2s;
+            letter-spacing: 1px;
+        }
+
+        .menu-title:hover { background: var(--bg); }
+
+        .submenu {
+            padding-left: 1rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .submenu.open { max-height: 500px; padding-bottom: 10px; }
+
+        .submenu a {
+            display: block;
+            text-decoration: none;
+            color: #718096;
+            font-size: 0.85rem;
+            padding: 8px 0;
+        }
+
+        .submenu a:hover { color: var(--accent); }
+
+        /* Main Content Container */
+        main {
+            margin-left: 280px;
+            padding: 100px 5% 5rem;
+            flex: 1;
+            min-width: 0;
+            will-change: transform; /* Helps prevent flicker on scroll */
+        }
+
+        h2 { 
+            font-weight: 400; 
+            font-size: 1.8rem; 
+            margin: 4rem 0 2rem; 
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        h2::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 12px;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(141, 163, 153, 0.1);
+        }
+
+        .card img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 18px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .card span {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #4a5568;
+            letter-spacing: 1px;
+            padding: 5px 0 10px;
+        }
+
+        /* Mobile Layout */
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            
+            aside {
+                transform: translateX(-100%);
+                padding-top: 100px;
+            }
+
+            aside.mobile-open {
+                transform: translateX(0);
+                box-shadow: 20px 0 50px rgba(0,0,0,0.1);
+            }
+
+            main { margin-left: 0; padding-top: 80px; }
+            h2 { margin: 2.5rem 0 1.5rem; font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <a href="index.html" class="logo">Aura</a>
+        </div>
+        <div class="cart-btn">
+            <span>🛒</span>
+            <span>Bag (0)</span>
+        </div>
+    </nav>
+
+    <aside id="main-sidebar">
+        <div class="menu-item">
+            <div class="menu-title" onclick="toggleMenu('men-menu')">MEN <span>▾</span></div>
+            <div id="men-menu" class="submenu">
+                <a href="men-shirts.html">Shirts</a>
+                <a href="men-tshirts.html">T-Shirts</a>
+                <a href="men-pants.html">Pants</a>
+                <a href="men-shoes.html">Sneakers</a>
+                <a href="men-slippers.html">Slippers</a>
+                <a href="men-sunglasses.html">Sunglasses</a>
+                <a href="men-shocks.html">Socks</a>
+                <a href="men-wallet.html">Wallet</a>
+                <a href="men-perfume.html">Perfume</a>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-title" onclick="toggleMenu('women-menu')">WOMEN <span>▾</span></div>
+            <div id="women-menu" class="submenu">
+                <a href="women-saree.html">Saree</a>
+                <a href="women-kurtas.html">Kurtas</a>
+                <a href="women-shoes.html">Sneakers</a>
+                <a href="women-slippers.html">Slippers</a>
+                <a href="women-sunglasses.html">Sunglasses</a>
+                <a href="women-socks.html">Socks</a>
+                <a href="women-handbag.html">Handbag</a>
+                <a href="women-perfume.html">Perfume</a>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-title" onclick="toggleMenu('kids-menu')">KIDS <span>▾</span></div>
+            <div id="kids-menu" class="submenu">
+                <a href="kids-bags.html">School Bags Boys</a>
+                <a href="kids-bags-girls.html">School Bags Girls</a>
+                <a href="kids-boys-pants.html">Boy's Pants</a>
+                <a href="kids-boys-shirt.html">Boy's Shirts</a>
+                <a href="kids-girls-kurtas.html">Girl's Kurtas</a>
+                <a href="eraser.html">Eraser</a>
+                <a href="pencils.html">Pencils</a>
+                <a href="pens.html">Pens</a>
+                <a href="sharpner.html">Sharpner</a>
+                <a href="notebooks.html">Notebooks</a>
+                <a href="toys.html">Toys</a>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-title" onclick="toggleMenu('elec-menu')">ELECTRONICS <span>▾</span></div>
+            <div id="elec-menu" class="submenu">
+                <a href="elec-watch.html">Smartwatch</a>
+                <a href="elec-fridge.html">Refrigerator</a>
+                <a href="elec-audio.html">Headphones</a>
+                <a href="elec-tv.html">Television</a>
+                <a href="elec-laptop.html">Laptop</a>
+                <a href="elec-powerbank.html">Powerbank</a>
+                <a href="elec-trimmer.html">Trimmer</a>
+                <a href="elec-mixergrinder.html">Mixer Grinder</a>
+                
+            </div>
+
+        </div>
+
+        <div class="menu-item">
+            <div class="menu-title" onclick="toggleMenu('crockery-menu')">CROCKERY <span>▾</span></div>
+            <div id="crockery-menu" class="submenu">
+                <a href="crockery-cups.html">Cups</a>
+                <a href="crockery-plates.html">Plates</a>
+                <a href="crockery-kettle.html">Tea Kettle</a>
+                <a href="crockery-spoon.html">Spoon</a>
+                <a href="crockery-knife.html">Knife and Scissors</a>
+                <a href="crockery-choppingboard.html">Chopping Board</a>
+
+            </div>
+        </div>
+        <div class="menu-item">
+            <div class="menu-title" onclick="toggleMenu('beverages-menu')">BEVERAGES AND DRINKS <span>▾</span></div>
+            <div id="beverages-menu" class="submenu">
+                <a href="beverages-tea.html">Tea</a>
+                <a href="beverages-coffee.html">Coffee</a>
+                <a href="beverages-cold-drink.html">Cold Drinks</a>
+                <a href="beverages-juice.html">Juices</a>
+                
+            </div>
+            <div class="menu-item">
+            <div class="menu-title" onclick="toggleMenu('bedsheets-menu')">BEDSHEETS AND SOFA COVERS AND MORE <span>▾</span></div>
+            <div id="bedsheets-menu" class="submenu">
+                <a href="bedsheets.html">Bedsheets</a>
+                <a href="pillow.html">Pillow</a>
+                <a href="sofa-cover.html">Sofa Covers</a>
+                <a href="bookrack.html">Book Rack</a>
+                <a href="corners.html">Corners</a>
+                <a href="mattress.html">Mattress</a>
+               
+                
+            </div>
+        </div>
+    </aside>
+
+    <main>
+        <header>
+            <h1 style="font-weight: 300; font-size: 2.2rem;">Our Collections</h1>
+            <p style="color: #8da399; margin-top: 5px;">Refined selections for your lifestyle.</p>
+        </header>
+
+        <section id="men-section">
+            <h2>Men's Essentials</h2>
+            <div class="category-grid">
+                <a href="men-shirts.html" class="card"><img src="images/shirts-men.webp" alt="Shirts"><span>SHIRTS</span></a>
+                <a href="men-tshirts.html" class="card"><img src="images/tshirt-men.jpg" alt="T-Shirts"><span>TSHIRTS</span></a>
+                <a href="men-pants.html" class="card"><img src="images/men-pants.webp" alt="Pants"><span>PANTS</span></a>
+                <a href="men-shoes.html" class="card"><img src="images/sneaker-men.jpg" alt="Sneakers"><span>SNEAKERS</span></a>
+                <a href="men-slippers.html" class="card"><img src="images/slipper-men.jpg" alt="Slippers"><span>SLIPPERS</span></a>
+                <a href="men-sunglasses.html" class="card"><img src="images/sunglass-men.jpg" alt="Sunglasses"><span>SUNGLASSES</span></a>
+                <a href="men-socks.html" class="card"><img src="images/men-shocks.jpg" alt="Socks"><span>SOCKS</span></a>
+                <a href="men-wallet.html" class="card"><img src="images/men-wallet.webp" alt="Wallet"><span>WALLET</span></a>
+            </div>
+        </section>
+
+        <section id="women-section">
+            <h2>Women's Elegance</h2>
+            <div class="category-grid">
+                <a href="women-saree.html" class="card"><img src="images/saree-women.jpg" alt="Saree"><span>SAREE</span></a>
+                <a href="women-kurtas.html" class="card"><img src="images/kurtas-women.jpg" alt="Kurtas"><span>KURTAS</span></a>
+                <a href="women-shoes.html" class="card"><img src="images/sneaker-women.jpg" alt="Sneakers"><span>SNEAKERS</span></a>
+                <a href="women-slippers.html" class="card"><img src="images/slipper-women.webp" alt="Slippers"><span>SLIPPERS</span></a>
+                <a href="women-sunglasses.html" class="card"><img src="images/sunglass-women.jpg" alt="Sunglasses"><span>SUNGLASSES</span></a>
+                <a href="women-socks.html" class="card"><img src="images/women-shocks2.jpg" alt="Socks"><span>SOCKS</span></a>
+                <a href="women-handbag.html" class="card"><img src="images/women-handbag.jpg" alt="Handbag"><span>HANDBAG</span></a>
+            </div>
+        </section>
+
+        <section id="kids-section">
+            <h2>Kids' Universe</h2>
+            <div class="category-grid">
+                <a href="kids-bags.html" class="card"><img src="images/boys-bag.jpg" alt="School Bags"><span>SCHOOL BAGS</span></a>
+                <a href="kids-bags-girls.html" class="card"><img src="images/girls-bag.jpg" alt="Notebooks"><span>NOTEBOOKS</span></a>
+                <a href="kids-boys-pants.html" class="card"><img src="images/kids-pants.jpg" alt="Boy's Pants"><span>BOY'S PANTS</span></a>
+                <a href="kids-boys-shirt.html" class="card"><img src="images/kids-shirts.jpg" alt="Boy's Shirts"><span>BOY'S SHIRT</span></a>
+                <a href="kids-girls-kurtas.html" class="card"><img src="images/kurtas-kids.jpg" alt="Girl's Kurtas"><span>GIRL'S KURTA</span></a>
+                <a href="eraser.html" class="card"><img src="images/erasers.jpg" alt="Eraser"><span>ERASER</span></a>
+                <a href="pencils.html" class="card"><img src="images/pencils.jpg" alt="Pencils"><span>PENCILS</span></a>
+                <a href="pens.html" class="card"><img src="images/pens.jpg" alt="Pens"><span>PENS</span></a>
+                <a href="sharpner.html" class="card"><img src="images/sharpner.jpg" alt="Sharpner"><span>SHARPNER</span></a>
+                <a href="notebooks.html" class="card"><img src="images/notebook.jpg" alt="Notebooks"><span>NOTEBOOKS</span></a>
+            </div>
+        </section>
+
+        <section id="electronics-section">
+            <h2>Modern Electronics</h2>
+            <div class="category-grid">
+                <a href="elec-watch.html" class="card"><img src="images/smart-watch.jpg" alt="Smartwatch"><span>SMARTWATCH</span></a>
+                <a href="elec-fridge.html" class="card"><img src="images/refrigerator.jpg" alt="Fridge"><span>REFRIGERATOR</span></a>
+                <a href="elec-audio.html" class="card"><img src="images/headphones.webp" alt="Audio"><span>HEADPHONES</span></a>
+                <a href="elec-tv.html" class="card"><img src="images/television.jpg" alt="Television"><span>TELEVISION</span></a>
+                <a href="elec-laptop.html" class="card"><img src="images/laptop.jpg" alt="Laptop"><span>LAPTOP</span></a>
+                <a href="elec-powerbank.html" class="card"><img src="images/powerbank.jpg" alt="Powerbank"><span>POWERBANK</span></a>
+            </div>
+        </section>
+
+        <section id="crockery-section">
+            <h2>Crockery Collection</h2>
+            <div class="category-grid">
+                <a href="crockery-cups.html" class="card"><img src="images/cups.webp" alt="Cups"><span>CUPS</span></a>
+                <a href="crockery-plates.html" class="card"><img src="images/plates.jpg" alt="Plates"><span>PLATES</span></a>
+                <a href="crockery-kettle.html" class="card"><img src="images/teakettle.jpg" alt="Tea Kettle"><span>TEA KETTLE</span></a>
+                <a href="crockery-spoon.html" class="card"><img src="images/spoon.jpg" alt="Spoon"><span>SPOON</span></a>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function toggleMenu(id) {
+            const menu = document.getElementById(id);
+            const allMenus = document.querySelectorAll('.submenu');
+            allMenus.forEach(m => { if(m.id !== id) m.classList.remove('open'); });
+            menu.classList.toggle('open');
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('main-sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        // Optimized click detection
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('main-sidebar');
+            const toggleBtn = document.querySelector('.menu-toggle');
+            if (window.innerWidth <= 768 && sidebar.classList.contains('mobile-open')) {
+                if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                    sidebar.classList.remove('mobile-open');
+                }
+            }
+        });
+
+        // Smooth scroll with offset for stability
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    e.preventDefault();
+                    if(window.innerWidth <= 768) toggleSidebar(); // Close on click for mobile
+
+                    const offset = 100;
+                    const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                    window.scrollTo({
+                        top: elementPosition - offset,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

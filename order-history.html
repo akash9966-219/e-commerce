@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | Order History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --accent: #8da399;
+            --text: #2d3436;
+            --border: #edf2f7;
+            --glass: rgba(255, 255, 255, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding-top: 100px; line-height: 1.6; }
+
+        /* Navbar */
+        .nav {
+            position: fixed; top: 0; width: 100%; height: 80px;
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 5%; border-bottom: 1px solid var(--border); z-index: 1000;
+        }
+        .logo { font-size: 1.2rem; font-weight: 600; letter-spacing: 5px; color: var(--accent); text-transform: uppercase; text-decoration: none; }
+
+        /* Content Container */
+        .container { max-width: 850px; margin: 0 auto; padding: 20px; }
+        header { margin-bottom: 40px; text-align: center; }
+        h1 { font-weight: 300; font-size: 2.2rem; letter-spacing: -1px; }
+        .user-email { font-size: 0.85rem; color: var(--accent); margin-top: 8px; font-weight: 600; }
+
+        /* Order Card */
+        .order-card {
+            background: white; border-radius: 24px; padding: 30px;
+            margin-bottom: 30px; border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            animation: fadeIn 0.6s ease forwards; opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .order-meta {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 20px;
+        }
+        .order-id { font-size: 0.7rem; color: #94a3b8; letter-spacing: 1px; text-transform: uppercase; }
+        .order-date { font-weight: 600; font-size: 1rem; color: var(--text); margin-top: 4px; }
+        .status-pill {
+            background: #f0fdf4; color: #166534; padding: 6px 16px;
+            border-radius: 30px; font-size: 0.75rem; font-weight: 600;
+            border: 1px solid #dcfce7;
+        }
+
+        /* Product Rows */
+        .product-item {
+            display: flex; align-items: center; gap: 20px;
+            padding: 15px 0; border-bottom: 1px solid #f8fafc;
+        }
+        .product-item:last-child { border-bottom: none; }
+        
+        .product-img-box {
+            width: 80px; height: 80px; border-radius: 15px;
+            overflow: hidden; background: #f1f5f9;
+            border: 1px solid var(--border); flex-shrink: 0;
+        }
+        .product-img-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .product-info { flex: 1; }
+        .product-name { font-weight: 600; font-size: 1rem; margin-bottom: 4px; }
+        .product-details { font-size: 0.8rem; color: #64748b; }
+
+        .product-price { font-weight: 600; color: var(--text); font-size: 1rem; }
+
+        /* Footer */
+        .order-footer {
+            margin-top: 20px; padding-top: 20px;
+            border-top: 1px dashed var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .total-label { color: #64748b; font-size: 0.9rem; }
+        .total-amount { font-size: 1.3rem; font-weight: 600; color: var(--text); }
+
+        /* Empty State */
+        .empty-state { text-align: center; padding: 100px 20px; color: #94a3b8; }
+        .btn-action {
+            display: inline-block; margin-top: 25px; padding: 14px 35px;
+            background: var(--accent); color: white; text-decoration: none;
+            border-radius: 15px; font-weight: 600; transition: 0.3s;
+        }
+        .btn-action:hover { background: #2d3436; transform: translateY(-2px); }
+
+        @media (max-width: 600px) {
+            .order-meta { flex-direction: column; gap: 10px; }
+            .product-item { gap: 12px; }
+            .product-img-box { width: 60px; height: 60px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav">
+        <a href="index.html" class="logo">Aura</a>
+        <a href="products.html" style="text-decoration: none; color: var(--accent); font-weight: 600; font-size: 0.9rem;">Back to Store</a>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Purchase History</h1>
+            <div id="userEmailDisplay" class="user-email">Verifying Identity...</div>
+        </header>
+
+        <div id="historyList">
+            <div class="empty-state">Syncing with Aura Cloud...</div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://newtlkztpiztbhpdbnqw.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_8pkhrkGcBVs5nw__Z8AGBw_1VB3VtUg';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function initHistory() {
+            // 1. Get Logged-in User
+            const { data: { user } } = await supabaseClient.auth.getUser();
+
+            if (!user) {
+                document.getElementById('historyList').innerHTML = `
+                    <div class="empty-state">
+                        <p>Your session has expired or you are not logged in.</p>
+                        <a href="auth.html" class="btn-action">Return to Login</a>
+                    </div>`;
+                return;
+            }
+
+            document.getElementById('userEmailDisplay').innerText = `ACCOUNT: ${user.email}`;
+
+            // 2. Fetch Orders matching email
+            const { data: orders, error } = await supabaseClient
+                .from('orders')
+                .select('*')
+                .eq('customer_email', user.email)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error("Database error:", error);
+                document.getElementById('historyList').innerHTML = `<div class="empty-state">Unable to load orders. Please try again later.</div>`;
+                return;
+            }
+
+            if (!orders || orders.length === 0) {
+                document.getElementById('historyList').innerHTML = `
+                    <div class="empty-state">
+                        <p>No orders found for this account.</p>
+                        <a href="products.html" class="btn-action">Start Your Collection</a>
+                    </div>`;
+                return;
+            }
+
+            // 3. Render Order Cards
+            const listContainer = document.getElementById('historyList');
+            listContainer.innerHTML = orders.map(order => {
+                const dateObj = new Date(order.created_at);
+                const formattedDate = dateObj.toLocaleDateString('en-IN', {
+                    day: '2-digit', month: 'short', year: 'numeric'
+                });
+
+                // Mapping the items JSON
+                const itemsHtml = order.items.map(item => `
+                    <div class="product-item">
+                        <div class="product-img-box">
+                            <img src="${item.img}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/150?text=Aura+Product'">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">${item.name}</div>
+                            <div class="product-details">Size: ${item.size || 'Standard'} | Quantity: ${item.qty}</div>
+                        </div>
+                        <div class="product-price">₹${(item.price * item.qty).toLocaleString()}</div>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="order-card">
+                        <div class="order-meta">
+                            <div>
+                                <div class="order-id">Transaction: ${order.payment_id}</div>
+                                <div class="order-date">${formattedDate}</div>
+                            </div>
+                            <span class="status-pill">Order Confirmed</span>
+                        </div>
+                        <div class="order-items-container">
+                            ${itemsHtml}
+                        </div>
+                        <div class="order-footer">
+                            <span class="total-label">Grand Total Paid</span>
+                            <span class="total-amount">₹${order.amount.toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        initHistory();
+    </script>
+</body>
+</html>

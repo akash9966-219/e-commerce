@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #fdfdfd;
+            --accent: #8da399; /* Soothing Sage */
+            --text: #2d3436;
+            --soft-shadow: 0 10px 40px rgba(0,0,0,0.02);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Moving Soft Gradient Background */
+        .aura-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, #e8f0ed 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, #f3eee7 0%, transparent 40%);
+            z-index: -1;
+            filter: blur(100px);
+            animation: pulse 10s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
+        }
+
+        .container {
+            text-align: center;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 400;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            color: var(--accent);
+            animation: fadeIn 2s ease;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 200;
+            line-height: 1.2;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1.5s ease;
+        }
+
+        /* The Button */
+        .enter-btn {
+            background: none;
+            border: 1px solid rgba(0,0,0,0.1);
+            padding: 20px 60px;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 3s ease;
+        }
+
+        .enter-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(141, 163, 153, 0.05);
+            letter-spacing: 5px;
+        }
+
+        /* Loading Animation Overlay */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            z-index: 100;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 2px;
+            background: #eee;
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress-fill {
+            position: absolute;
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .loading-text {
+            font-weight: 300;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            color: var(--accent);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Exit effect */
+        .page-exit {
+            opacity: 0;
+            transform: scale(0.95);
+            filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="aura-canvas"></div>
+
+    <div class="container" id="main-content">
+        <div class="logo">Aura</div>
+        <h1>Elevating your everyday,<br>with intention.</h1>
+        <button class="enter-btn" onclick="startLoading()">Enter Store</button>
+    </div>
+
+    <div class="loader-overlay" id="loader">
+        <div class="loading-text">PREPARING YOUR EXPERIENCE</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+    </div>
+
+    <script>
+        function startLoading() {
+            const content = document.getElementById('main-content');
+            const loader = document.getElementById('loader');
+            const progress = document.getElementById('progress');
+
+            // 1. Fade out the main content
+            content.classList.add('page-exit');
+
+            // 2. Show loader after a short delay
+            setTimeout(() => {
+                content.style.display = 'none';
+                loader.style.display = 'flex';
+                
+                // 3. Start progress bar animation
+                setTimeout(() => {
+                    progress.style.width = '100%';
+                }, 100);
+
+                // 4. Redirect after animation completes
+                setTimeout(() => {
+                    window.location.href = 'auth.html';
+                }, 2500); // 2.5 seconds total loading time
+            }, 800);
+        }
+    </script>
+</body>
+</html>

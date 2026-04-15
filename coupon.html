@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | Privilege Rewards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --accent: #8da399;
+            --text: #2d3436;
+            --border: #e2e8f0;
+            --glass: rgba(255, 255, 255, 0.9);
+            --gold: #c5a059;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+        /* Animated Aura Background */
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 10% 20%, #e8f0ed 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, #f3eee7 0%, transparent 40%);
+            z-index: -1; filter: blur(80px); opacity: 0.6;
+        }
+
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(15px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 6%; z-index: 1000; border-bottom: 1px solid var(--border);
+        }
+        .logo { font-size: 1.4rem; font-weight: 600; letter-spacing: 8px; color: var(--accent); text-decoration: none; text-transform: uppercase; }
+        .back-btn { text-decoration: none; color: var(--text); font-weight: 600; padding: 12px 28px; border-radius: 50px; background: white; border: 1px solid var(--border); transition: 0.3s; font-size: 0.8rem; letter-spacing: 1px; }
+        .back-btn:hover { background: var(--text); color: white; }
+
+        main { padding: 140px 8% 5rem; max-width: 1200px; margin: 0 auto; }
+        .header-box { text-align: center; margin-bottom: 60px; }
+        h1 { font-weight: 200; font-size: 3rem; letter-spacing: -1px; margin-bottom: 10px; }
+        .header-box p { color: #718096; letter-spacing: 2px; text-transform: uppercase; font-size: 0.75rem; font-weight: 600; }
+
+        .coupon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        /* Privilege Card Design */
+        .coupon-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px 30px;
+            border: 1px solid rgba(255,255,255,0.5);
+            position: relative;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+            transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .coupon-card:hover { transform: translateY(-15px); box-shadow: 0 30px 60px rgba(0,0,0,0.07); border-color: var(--accent); }
+
+        .tier-label { font-size: 0.65rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; display: block; }
+        
+        .discount-amt { font-size: 2.8rem; font-weight: 200; margin-bottom: 5px; color: var(--text); }
+        .discount-amt span { font-size: 1rem; font-weight: 600; vertical-align: top; margin-right: 2px; }
+
+        .min-spend { font-size: 0.85rem; color: #a0aec0; margin-bottom: 30px; }
+
+        .code-pill { 
+            background: #f1f5f9; border: 1px solid var(--border);
+            padding: 12px; border-radius: 15px; font-weight: 700;
+            letter-spacing: 4px; font-size: 1rem; margin-bottom: 25px;
+            color: var(--text); position: relative;
+        }
+
+        .copy-trigger {
+            width: 100%; padding: 15px; background: var(--text); color: white;
+            border: none; border-radius: 50px; font-weight: 600; letter-spacing: 2px;
+            font-size: 0.75rem; cursor: pointer; transition: 0.3s;
+        }
+        .copy-trigger:hover { background: var(--accent); transform: scale(1.02); }
+
+        /* Cooldown States */
+        .coupon-card.disabled { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
+        .cooldown-info { font-size: 0.7rem; color: #e53e3e; font-weight: 700; margin-top: 15px; display: none; text-transform: uppercase; }
+        .disabled .cooldown-info { display: block; }
+        .disabled .copy-trigger { background: #cbd5e0; }
+
+        /* Special Tier Accents */
+        .premium { border-top: 4px solid var(--gold); }
+        .premium .tier-label { color: var(--gold); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a href="index.html" class="logo">Aura</a>
+        <a href="cart.html" class="back-btn">RETURN TO BAG</a>
+    </nav>
+
+    <main>
+        <div class="header-box">
+            <p>Privilege Program</p>
+            <h1>Your Shopping Rewards</h1>
+        </div>
+
+        <div class="coupon-grid">
+            
+            <div class="coupon-card" id="tier-1">
+                <span class="tier-label">Essential</span>
+                <div class="discount-amt"><span>₹</span>200</div>
+                <p class="min-spend">For orders above ₹5,000</p>
+                <div class="code-pill">AURA200</div>
+                <button class="copy-trigger" onclick="claimReward('AURA200', 'tier-1')">COLLECT REWARD</button>
+                <div class="cooldown-info">Next claim in 24 hours</div>
+            </div>
+
+            <div class="coupon-card" id="tier-2">
+                <span class="tier-label">Select</span>
+                <div class="discount-amt"><span>₹</span>450</div>
+                <p class="min-spend">For orders above ₹25,000</p>
+                <div class="code-pill">AURA450</div>
+                <button class="copy-trigger" onclick="claimReward('AURA450', 'tier-2')">COLLECT REWARD</button>
+                <div class="cooldown-info">Next claim in 24 hours</div>
+            </div>
+
+            <div class="coupon-card" id="tier-3">
+                <span class="tier-label">Elite</span>
+                <div class="discount-amt"><span>₹</span>1200</div>
+                <p class="min-spend">For orders above ₹75,000</p>
+                <div class="code-pill">AURA1200</div>
+                <button class="copy-trigger" onclick="claimReward('AURA1200', 'tier-3')">COLLECT REWARD</button>
+                <div class="cooldown-info">Next claim in 24 hours</div>
+            </div>
+
+            <div class="coupon-card premium" id="tier-4">
+                <span class="tier-label">Grand Prestige</span>
+                <div class="discount-amt"><span>₹</span>2500</div>
+                <p class="min-spend">For orders above ₹1,00,000</p>
+                <div class="code-pill">AURA2500</div>
+                <button class="copy-trigger" onclick="claimReward('AURA2500', 'tier-4')">COLLECT REWARD</button>
+                <div class="cooldown-info">Next claim in 24 hours</div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        window.onload = checkStatus;
+
+        function claimReward(code, id) {
+            navigator.clipboard.writeText(code).then(() => {
+                alert("Exclusive code " + code + " collected! Valid for 24 hours.");
+                
+                // Store the millisecond timestamp
+                const now = new Date().getTime();
+                localStorage.setItem('aura_use_' + id, now);
+                
+                checkStatus();
+            });
+        }
+
+        function checkStatus() {
+            const tiers = ['tier-1', 'tier-2', 'tier-3', 'tier-4'];
+            const now = new Date().getTime();
+            const oneDay = 24 * 60 * 60 * 1000;
+
+            tiers.forEach(id => {
+                const usedAt = localStorage.getItem('aura_use_' + id);
+                const card = document.getElementById(id);
+                
+                if (usedAt) {
+                    const timeRemaining = (parseInt(usedAt) + oneDay) - now;
+                    
+                    if (timeRemaining > 0) {
+                        card.classList.add('disabled');
+                        card.querySelector('.copy-trigger').innerText = "CLAIMED";
+                    } else {
+                        card.classList.remove('disabled');
+                        localStorage.removeItem('aura_use_' + id);
+                        card.querySelector('.copy-trigger').innerText = "COLLECT REWARD";
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
