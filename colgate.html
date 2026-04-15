@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Care | Colgate Premium Collection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4739812509448084" crossorigin="anonymous"></script>
+
+    <style>
+        :root {
+            --bg: #fdfdfd;
+            --accent: #8da399;
+            --text: #2d3436;
+            --border: #edf2f7;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: var(--glass); backdrop-filter: blur(15px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; z-index: 1000; border-bottom: 1px solid var(--border);
+        }
+        .logo { font-size: 1.4rem; font-weight: 600; letter-spacing: 6px; color: var(--accent); text-transform: uppercase; text-decoration: none; }
+        .cart-btn {
+            background: white; padding: 10px 22px; border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer;
+            display: flex; align-items: center; gap: 10px; font-weight: 600;
+            border: 1px solid var(--border); color: var(--text);
+        }
+
+        main { padding: 120px 8% 5rem; max-width: 1400px; margin: 0 auto; }
+        .back-link { display: inline-block; margin-bottom: 25px; text-decoration: none; color: var(--accent); font-weight: 600; font-size: 0.9rem; transition: 0.3s; }
+        .back-link:hover { color: var(--text); transform: translateX(-5px); }
+
+        h1 { font-weight: 300; font-size: 2.2rem; margin-bottom: 2rem; text-align: center; }
+
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2.5rem; }
+
+        .product-card {
+            background: white; border-radius: 24px; padding: 25px;
+            text-align: center; cursor: pointer; transition: 0.4s ease;
+            border: 1px solid transparent; animation: fadeIn 0.8s ease;
+        }
+        .product-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .product-card img { width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 18px; margin-bottom: 15px; }
+        .product-card h3 { font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; color: #4a5568; text-transform: uppercase; }
+        .price-tag { margin-top: 8px; font-size: 1.2rem; color: var(--accent); font-weight: 600; }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .detail-modal {
+            background: white; width: 90%; max-width: 900px; max-height: 90vh;
+            border-radius: 30px; display: flex; overflow: hidden; position: relative;
+            animation: slideUp 0.5s ease;
+        }
+        .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.5rem; z-index: 10; }
+        .modal-img { width: 45%; background: #f8fafc; padding: 40px; display: flex; align-items: center; }
+        .modal-img img { width: 100%; height: auto; object-fit: contain; border-radius: 15px; }
+        .modal-info { width: 55%; padding: 40px; overflow-y: auto; }
+
+        .mrp { text-decoration: line-through; color: #a0aec0; font-size: 0.9rem; margin-right: 10px; }
+        .discount-price { font-size: 1.8rem; font-weight: 600; color: var(--text); }
+        .off-percent { color: #38a169; font-weight: 600; font-size: 0.9rem; margin-left: 10px; }
+
+        .description { margin: 20px 0; font-size: 0.95rem; line-height: 1.6; color: #718096; }
+        .size-btn { border: 1px solid #e2e8f0; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; transition: 0.3s; font-weight: 600; }
+        .size-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .btn-main { width: 100%; padding: 18px; border: none; border-radius: 15px; background: var(--accent); color: white; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-main:hover { background: #2d3436; }
+        
+        .qty-controls { display: none; align-items: center; justify-content: space-between; background: #f1f5f9; border-radius: 15px; padding: 10px 20px; }
+        .qty-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--accent); padding: 0 15px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        footer { padding: 60px; text-align: center; border-top: 1px solid var(--border); font-size: 0.8rem; color: #a0aec0; }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a href="index.html" class="logo">Aura</a>
+        <a href="cart.html" style="text-decoration: none;">
+            <div class="cart-btn">🛒 Bag (<span id="bag-count">0</span>)</div>
+        </a>
+    </nav>
+
+    <main>
+        <a href="products.html" class="back-link">← Back to Collections</a>
+        <h1>Colgate Dental Care</h1>
+
+        <div class="product-grid">
+            <div class="product-card" onclick="openProduct('VISIBLE STRONG TEETH', 250, 350, 'Oxygen-based whitening technology for results in 3 days.', 'images/colgate.jpg', [['50g', 0], ['100g', 150]])">
+                <img src="images/colgate.jpg" alt="Colgate 1">
+                <h3>VISIBLE STRONG TEETH</h3>
+                <div class="price-tag">₹250</div>
+            </div>
+            <div class="product-card" onclick="openProduct('COLGATE MAXFRESH', 140, 190, 'Cooling crystals for intense breath freshness.', 'images/colgate2.jpg', [['100g', 0], ['200g', 80]])">
+                <img src="images/colgate2.jpg" alt="Colgate 2">
+                <h3>COLGATE MAXFRESH</h3>
+                <div class="price-tag">₹140</div>
+            </div>
+            <div class="product-card" onclick="openProduct('COLGATE HERBAL CLEAN', 180, 260, 'Natural ingredients for total oral protection.', 'images/colgate3.png', [['120g', 0]])">
+                <img src="images/colgate3.png" alt="Colgate 3">
+                <h3>COLGATE HERBAL CLEAN</h3>
+                <div class="price-tag">₹180</div>
+            </div>
+            <div class="product-card" onclick="openProduct('COLGATE VISIBLE WHITE', 220, 310, 'Advanced whitening formula for a sparkling smile.', 'images/colgate4.jpg', [['100g', 0]])">
+                <img src="images/colgate4.jpg" alt="Colgate 4">
+                <h3>COLGATE VISIBLE WHITE</h3>
+                <div class="price-tag">₹220</div>
+            </div>
+            <div class="product-card" onclick="openProduct('VISIBLE WHITE PURPLE', 95, 130, 'Corrects yellow tones for an instant brighter smile.', 'images/colgate5.jpg', [['80g', 0]])">
+                <img src="images/colgate5.jpg" alt="Colgate 5">
+                <h3>COLGATE VISIBLE WHITE PURPLE</h3>
+                <div class="price-tag">₹95</div>
+            </div>
+            <div class="product-card" onclick="openProduct('COLGATE TOTAL', 290, 420, '12-hour protection against germs and plaque.', 'images/colgate6.png', [['150g', 0]])">
+                <img src="images/colgate6.png" alt="Colgate 6">
+                <h3>COLGATE TOTAL</h3>
+                <div class="price-tag">₹290</div>
+            </div>
+            <div class="product-card" onclick="openProduct('COLGATE CHARCOAL WHITE', 85, 120, 'Infused with charcoal for deep cleaning.', 'images/colgate7.jpg', [['100g', 0]])">
+                <img src="images/colgate7.jpg" alt="Colgate 7">
+                <h3>COLGATE CHARCOAL WHITE</h3>
+                <div class="price-tag">₹85</div>
+            </div>
+            <div class="product-card" onclick="openProduct('COLGATE SENSITIVE', 210, 280, 'Clinically proven relief for sensitive teeth.', 'images/colgate8.jpg', [['70g', 0]])">
+                <img src="images/colgate8.jpg" alt="Colgate 8">
+                <h3>COLGATE SENSITIVE</h3>
+                <div class="price-tag">₹210</div>
+            </div>
+            <div class="product-card" onclick="openProduct('COLGATE TOTAL 12', 110, 160, 'Whole mouth health for 12 hours.', 'images/colgate9.jpg', [['120g', 0]])">
+                <img src="images/colgate9.jpg" alt="Colgate 9">
+                <h3>COLGATE TOTAL 12</h3>
+                <div class="price-tag">₹110</div>
+            </div>
+            <div class="product-card" onclick="openProduct('COLGATE SALT ACTIVE', 75, 100, 'Contains salt for healthy gums and teeth.', 'images/colgate10.jpg', [['100g', 0]])">
+                <img src="images/colgate10.jpg" alt="Colgate 10">
+                <h3>COLGATE SALT ACTIVE</h3>
+                <div class="price-tag">₹75</div>
+            </div>
+            <div class="product-card" onclick="openProduct('COLGATE TRIPLE ACTION', 195, 270, 'Cavity protection, white teeth, fresh breath.', 'images/colgate11.png', [['150g', 0]])">
+                <img src="images/colgate11.png" alt="Colgate 11">
+                <h3>COLGATE TRIPLE ACTION</h3>
+                <div class="price-tag">₹195</div>
+            </div>
+            <div class="product-card" onclick="openProduct('COLGATE SENSITIVE PRO', 98, 140, 'Pro-Argin technology for instant relief.', 'images/colgate12.jpg', [['70g', 0]])">
+                <img src="images/colgate12.jpg" alt="Colgate 12">
+                <h3>COLGATE SENSITIVE PRO</h3>
+                <div class="price-tag">₹98</div>
+            </div>
+            <div class="product-card" onclick="openProduct('COLGATE VEDSHAKTI', 450, 650, 'Ayurvedic protection with 5 natural ingredients.', 'images/colgate13.png', [['200g', 0]])">
+                <img src="images/colgate13.png" alt="Colgate 13">
+                <h3>COLGATE VEDSHAKTI</h3>
+                <div class="price-tag">₹450</div>
+            </div>
+            <div class="product-card" onclick="openProduct('COLGATE HERBAL PACK', 120, 180, 'Family pack of herbal protection.', 'images/colgate14.jpg', [['Pack of 2', 0]])">
+                <img src="images/colgate14.jpg" alt="Colgate 14">
+                <h3>COLGATE HERBAL</h3>
+                <div class="price-tag">₹120</div>
+            </div>
+            
+        </div>
+    </main>
+
+    <div class="overlay" id="productOverlay">
+        <div class="detail-modal">
+            <span class="close-modal" onclick="closeProduct()">✕</span>
+            <div class="modal-img"><img id="modalImg" src="" alt=""></div>
+            <div class="modal-info">
+                <h2 id="modalTitle">Product Name</h2>
+                <div style="margin-top: 10px;">
+                    <span class="mrp" id="modalMRP">₹0</span>
+                    <span class="discount-price" id="modalPrice">₹0</span>
+                    <span class="off-percent" id="modalOff">0% OFF</span>
+                </div>
+                <p class="description" id="modalDesc"></p>
+                <div style="margin-bottom: 10px; font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">Select Variant</div>
+                <div class="size-options" id="sizeOptions" style="display: flex; gap: 10px; margin-bottom: 25px;"></div>
+                <div class="action-area">
+                    <button class="btn-main" id="addBtn" onclick="initAddToCart()">Add to Bag</button>
+                    <div class="qty-controls" id="qtyArea">
+                        <button class="qty-btn" onclick="updateQty(-1)">−</button>
+                        <span class="qty-val" id="qtyVal">1</span>
+                        <button class="qty-btn" onclick="updateQty(1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 Aura Home | <a href="privacy-policy.html" style="color: var(--accent); text-decoration: none;">Privacy Policy</a>
+    </footer>
+
+    <script>
+        let currentQty = 1;
+        let basePrice = 0;
+        let baseMRP = 0;
+
+        window.onload = function() { updateBadge(); }
+
+        function openProduct(name, price, mrp, desc, imgPath, configs) {
+            basePrice = price;
+            baseMRP = mrp;
+            document.getElementById('modalTitle').innerText = name;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalImg').src = imgPath; 
+
+            const optionsContainer = document.getElementById('sizeOptions');
+            optionsContainer.innerHTML = '';
+            
+            configs.forEach((cfg, index) => {
+                const btn = document.createElement('div');
+                btn.className = index === 0 ? 'size-btn active' : 'size-btn';
+                btn.innerText = cfg[0];
+                btn.onclick = function() { 
+                    selectSize(this); 
+                    updatePricing(cfg[1]);
+                };
+                optionsContainer.appendChild(btn);
+            });
+
+            updatePricing(0);
+            currentQty = 1;
+            document.getElementById('qtyVal').innerText = currentQty;
+            document.getElementById('addBtn').style.display = 'block';
+            document.getElementById('qtyArea').style.display = 'none';
+            document.getElementById('productOverlay').style.display = 'flex';
+        }
+
+        function updatePricing(priceAdd) {
+            const finalPrice = basePrice + priceAdd;
+            const finalMRP = baseMRP + priceAdd;
+            document.getElementById('modalPrice').innerText = "₹" + finalPrice.toLocaleString();
+            document.getElementById('modalMRP').innerText = "₹" + finalMRP.toLocaleString();
+            const off = Math.round(((finalMRP - finalPrice) / finalMRP) * 100);
+            document.getElementById('modalOff').innerText = off + "% OFF";
+        }
+
+        function closeProduct() { document.getElementById('productOverlay').style.display = 'none'; }
+        
+        function selectSize(btn) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function initAddToCart() {
+            document.getElementById('addBtn').style.display = 'none';
+            document.getElementById('qtyArea').style.display = 'flex';
+            updateGlobalBag(1);
+        }
+
+        function updateQty(change) {
+            currentQty += change;
+            if (currentQty < 1) {
+                document.getElementById('addBtn').style.display = 'block';
+                document.getElementById('qtyArea').style.display = 'none';
+                updateGlobalBag(-1);
+                currentQty = 1; 
+            } else {
+                document.getElementById('qtyVal').innerText = currentQty;
+                updateGlobalBag(change);
+            }
+        }
+
+        function updateGlobalBag(count) {
+            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const productName = document.getElementById('modalTitle').innerText;
+            const size = document.querySelector('.size-btn.active').innerText;
+            
+            // CAPTURE IMAGE: Specifically grabs the exact src from the modal
+            const productImg = document.getElementById('modalImg').getAttribute('src'); 
+            const productPrice = parseInt(document.getElementById('modalPrice').innerText.replace(/₹|,/g,''));
+            
+            const existingIndex = cart.findIndex(i => i.name === productName && i.size === size);
+            
+            if(existingIndex !== -1) {
+                cart[existingIndex].qty = currentQty;
+                if(cart[existingIndex].qty <= 0) cart.splice(existingIndex, 1);
+            } else if (count > 0) {
+                cart.push({ name: productName, price: productPrice, img: productImg, size: size, qty: currentQty });
+            }
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+            updateBadge();
+        }
+
+        function updateBadge() {
+            const cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const total = cart.reduce((acc, item) => acc + item.qty, 0);
+            const badge = document.getElementById('bag-count');
+            if (badge) badge.innerText = total;
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('productOverlay')) closeProduct();
+        }
+    </script>
+</body>
+</html>
